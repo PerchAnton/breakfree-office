@@ -20,9 +20,9 @@
 - Preserve the approved transparent BreakFree mark and existing instructions.
   Public prose/comments are English. Do not redistribute Microsoft fonts/assets
   or select a project license. Retain dependency notices independently.
-- After significant stages, publish the project log and the complete private
-  mirror with separate SYNC.md metadata, then read both back and compare bytes.
-  Preserve others' history, use dedicated journal commits and never force push.
+- After significant stages, update `docs/PROJECT_LOG.md` with source links,
+  actual checks and next actions. Preserve others' history, use dedicated journal
+  commits and never force push.
 - Prepare reviewable commits and PRs; no automatic main merge or release.
 - Follow [VERSIONING.md](VERSIONING.md), maintain [CHANGELOG.md](CHANGELOG.md)
   and derive the application version from Cargo.toml. End every completed-work

@@ -74,62 +74,22 @@ Use the pinned rust-toolchain.toml and Cargo.lock. Run cargo fmt --check, cargo 
 - No invented recents, templates, accounts or inert controls. Missing editors must
   explicitly appear as not installed. Editors remain independent executables.
 
-## Журнал и приватное зеркало
+## Project journal
 
-This section supersedes any earlier prohibition on duplicating the project log
-in `gitwork`. It does not replace the other instructions above.
-
-- Project: `PerchAnton/breakfree-office`, https://github.com/PerchAnton/breakfree-office.
-- Primary log: `docs/PROJECT_LOG.md` in this project's own repository.
-- Required full private copy: https://github.com/PerchAnton/gitwork, branch `main`,
-  exact path `breakfree/breakfree-office/PROJECT_LOG.md`.
-- Mirror metadata: `breakfree/breakfree-office/SYNC.md` in `gitwork/main`.
-- Read the current `prompts/breakfree-office.md` in `gitwork` before updating the
-  log. After every significant stage and whenever a project check is requested,
-  update and publish BOTH copies. Publishing only the primary is incomplete.
-- Fetch remote updates safely, read existing instructions and both logs, and
-  preserve unrelated local changes and other authors' history. If the mirror
-  contains entries absent from the primary, reconcile without loss in the primary
-  and publish that first. Update an event with the same source URL instead of
-  duplicating it. Never use force push.
-- Keep public prose in English. Use the sections Current state (Текущее состояние),
-  Work and checks (Работа и проверки), Comments and reviews (Комментарии и ревью),
-  Offers and requests for help (Предложения и просьбы о помощи), Next actions
-  (Следующие действия), and Check history (История проверок). Keep events and
-  actions in tables and retain previous history.
-- Record date/time with `Europe/Kyiv`, completed work, commit/PR/issue links,
-  actual checks and limitations. Distinguish code readiness, local tests, remote
-  CI, merge and release. Do not turn fixture results into real-editor evidence.
+- Keep this project's public journal in `docs/PROJECT_LOG.md`. Update it after
+  significant stages and requested checks, using dedicated commits and the
+  branch/PR workflow. Preserve other authors' work and never force push.
+- Keep public prose in English. Retain work/check history and the sections
+  Current state, Work and checks, Comments and reviews, Offers and requests for
+  help, Next actions and Check history. Use tables for events and actions.
+- Record Europe/Kyiv timestamps, source commit/PR/issue links, actual checks and
+  limitations. Distinguish code readiness, local tests, CI, merge and release.
 - Check issues, PR conversations, reviews, inline threads and Discussions when
-  enabled. For each event record `@author`, human/bot identity, date, direct source
-  URL, request, required response and handling status. An unchecked or unavailable
-  source is not evidence that there are no events.
-- Record help offers and help requests separately with author, task, message URL
-  and whether an owner response is needed. An offer is not an assignment; stars
-  and forks are not help offers. Record task priority, concrete next action,
-  source, status, blocker and an assignee only when confirmed.
-- Document the checked sources, objects, time and covered period. State the full
-  coverage on the first check. Later checks cover events since the previous check,
-  including new replies on old issues and PRs. No scheduled monitoring is implied.
-- Publish journal updates in dedicated commits through this project's branch/PR
-  workflow, excluding unrelated files and secrets. Do not publish private
-  correspondence or send public replies, invitations or assignments without a
-  separate owner instruction. Creating the requested publication PR is allowed.
-- After primary publication, fetch fresh `gitwork/main`, re-read this project's
-  existing mirror, and copy the entire published primary text byte for byte.
-  Keep the metadata outside the mirrored log: source repository, source branch,
-  source path, full source commit SHA, immutable source-file URL and synchronization
-  time with offset and `Europe/Kyiv`.
-- Commit the mirror and metadata separately in `gitwork/main`. Update only this
-  project's row in its Breakfree README table with the status, source/mirror
-  links, check time and next step. Preserve other projects' rows and files.
-- If a push is rejected after concurrent updates, fetch, reconcile all authors'
-  entries and retry without force push. Read both published files back from
-  GitHub and compare their full text before reporting synchronization success.
-- If private publication is unavailable, preserve a ready local copy and report
-  explicitly: «приватная копия не отправлена» (the mirror was not sent). Never
-  present a successful primary push as proof of a successful mirror push.
-- Report links to AGENTS.md, both published logs and commits in both repositories,
-  followed by a project summary table: project, changes, commenters, help
-  offers/requests, next actions and check date. Distinguish a fresh GitHub check
-  from a summary of the saved log.
+  enabled, including new replies on older objects. Record source coverage and
+  unavailable sources; absence of a check is not evidence of no events.
+- Record each event's @author, human/bot identity, date, direct URL, requested
+  action and handling status. Keep help offers and requests separate. Do not
+  infer assignments from offers, stars or forks; confirm assignees explicitly.
+- Reconcile history without loss and update an event by its source URL rather
+  than duplicating it. Do not send public replies or invitations without a
+  separate owner instruction. No scheduled monitoring is implied.

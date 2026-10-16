@@ -94,12 +94,12 @@ authorization. There is no automatic release workflow in this repository.
    record the exact revision, CI results, tested targets and remaining limitations.
    Complete the applicable [roadmap release gates](ROADMAP.md#5--prepare-verified-releases).
 3. Obtain explicit owner version/scope approval and the separate review/merge
-   and publication decisions. Keep pending gates visible in both journal copies.
+   and publication decisions. Keep pending gates visible in the project log.
 4. Once authorized, finalize dated changelog/release notes and verify the final
    release SHA, Cargo version, `v<version>` tag and artifact names agree. Attach
    only verified artifacts with checksums and platform/format limitations.
 5. Record the actual tag, release URL, source SHA, approval and checks in the
-   project log; publish its full private mirror and SYNC.md. Start a new
+   project log. Start a new
    Unreleased changelog section without inventing the next approved version.
 
 Until publication, keep the changelog under **Unreleased** with no release date.
