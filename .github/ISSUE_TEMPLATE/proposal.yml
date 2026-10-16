@@ -1,0 +1,30 @@
+name: Project proposal
+description: Suggest a workflow, design improvement or technical direction.
+title: "[Proposal] "
+body:
+  - type: markdown
+    attributes:
+      value: "BreakFree is at the planning stage. Describe the user problem before a proposed implementation. Do not attach confidential documents or credentials."
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem should we solve?
+      description: Include one realistic, anonymized workflow.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Smallest useful outcome
+      description: What should someone be able to do?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: How could we verify it?
+      description: Suggest observable acceptance criteria.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and context

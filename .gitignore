@@ -1,0 +1,17 @@
+# Local operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local secrets; keep explicit example files versioned
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+
+# Temporary editor files
+*.swp
+*.swo
+*~

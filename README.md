@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/brand/breakfree-icon.svg" alt="BreakFree Office: documents, spreadsheets and presentations with a rainbow accent" width="160" height="160">
+  <img src="docs/brand/breakfree-icon.webp" alt="BreakFree Office: documents, spreadsheets and presentations with a rainbow accent" width="160" height="160">
 </p>
 
 <h1 align="center">BreakFree Office</h1>
@@ -26,7 +26,7 @@
 ---
 
 > [!IMPORTANT]
-> **This project is at the planning stage.** These repositories currently contain project documentation and branding, not working office applications. Features below describe our intended direction. There are no installers or verified Microsoft Office compatibility claims yet.
+> **This project is at the planning stage.** These repositories contain project documentation and branding, not working office applications. Features below describe our intended direction. There are no installers or verified Microsoft Office compatibility claims yet.
 
 ## Office tools. On your terms.
 
