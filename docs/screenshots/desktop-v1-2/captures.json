@@ -1,0 +1,371 @@
+{
+  "application_version": "0.1.0-alpha.3",
+  "visual_version": "1.2.0",
+  "os": "macOS 27.0.1 arm64",
+  "native_backing_ratio": 2,
+  "theme": "light",
+  "language": "English",
+  "font": "Arial (system, macOS fallback)",
+  "source": "Native Glow own-window framebuffer; validation-capture feature; no mockups",
+  "windows_scaling_evidence": false,
+  "editor_state": "No editors configured; empty settings and actual empty recent list",
+  "captures": [
+    {
+      "file": "macos-home-100-default.png",
+      "page": "home",
+      "session_zoom": 1.0,
+      "window": "default",
+      "state": "normal",
+      "pixels": [
+        2240,
+        1520
+      ],
+      "sha256": "0a99d3067fa6d542035beea5b7b9246f14a86272377f146f62586ab15d347576",
+      "captured_at": "2026-10-16T16:38:36+03:00",
+      "requested_window_logical": [
+        1120,
+        760
+      ],
+      "actual_client_logical_before_zoom": [
+        1120.0,
+        760.0
+      ]
+    },
+    {
+      "file": "macos-new-100-default.png",
+      "page": "new",
+      "session_zoom": 1.0,
+      "window": "default",
+      "state": "normal",
+      "pixels": [
+        2240,
+        1520
+      ],
+      "sha256": "ebcd09b03845c11f107950995ace93a5fb51c2935440dd5b045b27554cd4bc99",
+      "captured_at": "2026-10-16T16:38:37+03:00",
+      "requested_window_logical": [
+        1120,
+        760
+      ],
+      "actual_client_logical_before_zoom": [
+        1120.0,
+        760.0
+      ]
+    },
+    {
+      "file": "macos-open-100-default.png",
+      "page": "open",
+      "session_zoom": 1.0,
+      "window": "default",
+      "state": "normal",
+      "pixels": [
+        2240,
+        1520
+      ],
+      "sha256": "429870e7ae970322b5df373082ce5cca11cbc222b1dc8e4beba7ffa1588434e3",
+      "captured_at": "2026-10-16T16:38:39+03:00",
+      "requested_window_logical": [
+        1120,
+        760
+      ],
+      "actual_client_logical_before_zoom": [
+        1120.0,
+        760.0
+      ]
+    },
+    {
+      "file": "macos-recent-100-default.png",
+      "page": "recent",
+      "session_zoom": 1.0,
+      "window": "default",
+      "state": "normal",
+      "pixels": [
+        2240,
+        1520
+      ],
+      "sha256": "262fa3c1a1a11d2d2bb2ccb78461a3f8e9d8f2b0ef62474138f05d687df071fd",
+      "captured_at": "2026-10-16T16:38:40+03:00",
+      "requested_window_logical": [
+        1120,
+        760
+      ],
+      "actual_client_logical_before_zoom": [
+        1120.0,
+        760.0
+      ]
+    },
+    {
+      "file": "macos-settings-100-default.png",
+      "page": "settings",
+      "session_zoom": 1.0,
+      "window": "default",
+      "state": "normal",
+      "pixels": [
+        2240,
+        1520
+      ],
+      "sha256": "5562a915aca4519564ad4cb40f15864f5b13b9cd17caeb7e0c7567f5231e15ba",
+      "captured_at": "2026-10-16T16:38:41+03:00",
+      "requested_window_logical": [
+        1120,
+        760
+      ],
+      "actual_client_logical_before_zoom": [
+        1120.0,
+        760.0
+      ]
+    },
+    {
+      "file": "macos-about-100-default.png",
+      "page": "about",
+      "session_zoom": 1.0,
+      "window": "default",
+      "state": "normal",
+      "pixels": [
+        2240,
+        1520
+      ],
+      "sha256": "a20bc65e96e7a55aabd05654e1cb495846b36a3bb3d675777d5f203d5ac9dba6",
+      "captured_at": "2026-10-16T16:38:42+03:00",
+      "requested_window_logical": [
+        1120,
+        760
+      ],
+      "actual_client_logical_before_zoom": [
+        1120.0,
+        760.0
+      ]
+    },
+    {
+      "file": "macos-home-125-default.png",
+      "page": "home",
+      "session_zoom": 1.25,
+      "window": "default",
+      "state": "normal",
+      "pixels": [
+        2240,
+        1520
+      ],
+      "sha256": "38a50c0ce4b1ccabf67e7a4b7dc6d3b13bbd9bb598c94bf564fab223ba09b140",
+      "captured_at": "2026-10-16T16:38:44+03:00",
+      "requested_window_logical": [
+        1120,
+        760
+      ],
+      "actual_client_logical_before_zoom": [
+        1120.0,
+        760.0
+      ]
+    },
+    {
+      "file": "macos-home-150-default.png",
+      "page": "home",
+      "session_zoom": 1.5,
+      "window": "default",
+      "state": "normal",
+      "pixels": [
+        2240,
+        1520
+      ],
+      "sha256": "de78bae87e064b99aa27f79f6c0a451d4f82e8e24c85d8b94cb4b4ce5d990e46",
+      "captured_at": "2026-10-16T16:38:45+03:00",
+      "requested_window_logical": [
+        1120,
+        760
+      ],
+      "actual_client_logical_before_zoom": [
+        1120.0,
+        760.0
+      ]
+    },
+    {
+      "file": "macos-home-150-minimum.png",
+      "page": "home",
+      "session_zoom": 1.5,
+      "window": "minimum",
+      "state": "normal",
+      "pixels": [
+        1760,
+        1200
+      ],
+      "sha256": "d0bb2260c671a3130682dd52c3b88a00349c20aa8bddbec06834334478ed0842",
+      "captured_at": "2026-10-16T16:38:46+03:00",
+      "requested_window_logical": [
+        880,
+        600
+      ],
+      "actual_client_logical_before_zoom": [
+        880.0,
+        600.0
+      ]
+    },
+    {
+      "file": "macos-open-150-minimum.png",
+      "page": "open",
+      "session_zoom": 1.5,
+      "window": "minimum",
+      "state": "normal",
+      "pixels": [
+        1760,
+        1200
+      ],
+      "sha256": "8c1cbd6444092db6b9d6bdc1358f8b2b26c01d59350c82d3fc893059e5a2f285",
+      "captured_at": "2026-10-16T16:38:47+03:00",
+      "requested_window_logical": [
+        880,
+        600
+      ],
+      "actual_client_logical_before_zoom": [
+        880.0,
+        600.0
+      ]
+    },
+    {
+      "file": "macos-settings-150-minimum.png",
+      "page": "settings",
+      "session_zoom": 1.5,
+      "window": "minimum",
+      "state": "normal",
+      "pixels": [
+        1760,
+        1200
+      ],
+      "sha256": "0fdbae3e0455aa309c11e8995c1b368ba6c6edecdd61246ae0bdc91d810159ce",
+      "captured_at": "2026-10-16T16:38:48+03:00",
+      "requested_window_logical": [
+        880,
+        600
+      ],
+      "actual_client_logical_before_zoom": [
+        880.0,
+        600.0
+      ]
+    },
+    {
+      "file": "macos-home-100-default-menu.png",
+      "page": "home",
+      "session_zoom": 1.0,
+      "window": "default",
+      "state": "menu",
+      "pixels": [
+        2240,
+        1520
+      ],
+      "sha256": "cf68e03948b78c98fc727f1cf2b153fd004f162fb3ffc85706668fe0e2ace4f8",
+      "captured_at": "2026-10-16T16:38:50+03:00",
+      "requested_window_logical": [
+        1120,
+        760
+      ],
+      "actual_client_logical_before_zoom": [
+        1120.0,
+        760.0
+      ]
+    },
+    {
+      "file": "macos-home-100-default-focus.png",
+      "page": "home",
+      "session_zoom": 1.0,
+      "window": "default",
+      "state": "focus",
+      "pixels": [
+        2240,
+        1520
+      ],
+      "sha256": "cf94cbb3eb848f84b7fd1b3354fe459119c9d8775d863e90386770c6fba487d8",
+      "captured_at": "2026-10-16T16:38:51+03:00",
+      "requested_window_logical": [
+        1120,
+        760
+      ],
+      "actual_client_logical_before_zoom": [
+        1120.0,
+        760.0
+      ]
+    },
+    {
+      "file": "macos-open-100-default-computer.png",
+      "page": "open",
+      "session_zoom": 1.0,
+      "window": "default",
+      "state": "computer",
+      "pixels": [
+        2240,
+        1520
+      ],
+      "sha256": "6812c20917666ec13b4015c4fe92b549c82d99843b7420e8ed32e18b166e60a7",
+      "captured_at": "2026-10-16T16:38:52+03:00",
+      "requested_window_logical": [
+        1120,
+        760
+      ],
+      "actual_client_logical_before_zoom": [
+        1120.0,
+        760.0
+      ]
+    },
+    {
+      "file": "macos-open-150-minimum-computer.png",
+      "page": "open",
+      "session_zoom": 1.5,
+      "window": "minimum",
+      "state": "computer",
+      "pixels": [
+        1760,
+        1200
+      ],
+      "sha256": "5539e447c7048917f2c0831fd2fbbfbd865a6faf2f6e5b02d6f871c55d4d2fc2",
+      "captured_at": "2026-10-16T16:38:54+03:00",
+      "requested_window_logical": [
+        880,
+        600
+      ],
+      "actual_client_logical_before_zoom": [
+        880.0,
+        600.0
+      ]
+    },
+    {
+      "file": "macos-open-125-default.png",
+      "page": "open",
+      "session_zoom": 1.25,
+      "window": "default",
+      "state": "normal",
+      "pixels": [
+        2240,
+        1520
+      ],
+      "sha256": "11a9737a16af5488c05a6ef6d9cbea6591a60e2c5da734bb5008bf11055e41bb",
+      "captured_at": "2026-10-16T16:38:55+03:00",
+      "requested_window_logical": [
+        1120,
+        760
+      ],
+      "actual_client_logical_before_zoom": [
+        1120.0,
+        760.0
+      ]
+    },
+    {
+      "file": "macos-open-100-large.png",
+      "page": "open",
+      "session_zoom": 1.0,
+      "window": "large",
+      "state": "normal",
+      "pixels": [
+        2880,
+        1630
+      ],
+      "sha256": "78173717affd31723a07aac068d0d6468b564809b51b38c1a02f95a77f651148",
+      "captured_at": "2026-10-16T16:38:57+03:00",
+      "requested_window_logical": [
+        1440,
+        900
+      ],
+      "actual_client_logical_before_zoom": [
+        1440.0,
+        815.0
+      ]
+    }
+  ]
+}

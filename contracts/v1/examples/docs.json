@@ -1,0 +1,10 @@
+{
+  "protocol_version": 1,
+  "app_id": "breakfree.docs",
+  "app_version": "0.0.0-example",
+  "display_name": "BreakFree Docs",
+  "capabilities": ["new", "open"],
+  "formats": [
+    {"id": "breakfree.docs.native", "extensions": ["bfdoc"], "read": true, "write": true}
+  ]
+}

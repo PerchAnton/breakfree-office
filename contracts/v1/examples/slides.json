@@ -1,0 +1,10 @@
+{
+  "protocol_version": 1,
+  "app_id": "breakfree.slides",
+  "app_version": "0.0.0-example",
+  "display_name": "BreakFree Slides",
+  "capabilities": ["new", "open"],
+  "formats": [
+    {"id": "breakfree.slides.native", "extensions": ["bfslide"], "read": true, "write": true}
+  ]
+}

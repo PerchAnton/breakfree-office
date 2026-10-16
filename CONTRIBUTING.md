@@ -23,6 +23,17 @@ Keep changes focused. Link the relevant issue, explain what changed and describe
 
 Do not claim tests passed when they were not run. Do not introduce fake download links, release badges, screenshots of nonexistent features or platform support without evidence.
 
+## Versions and releases
+
+Follow [VERSIONING.md](VERSIONING.md) and update [CHANGELOG.md](CHANGELOG.md)
+for every completed change set, including documentation and standalone journal
+updates. Increment the application version (currently the alpha suffix by one),
+keep Cargo.toml/Cargo.lock consistent, and record the reason and scope. Validation
+and journal commits completing the same change set share that version. Report the exact
+current version and approval status at the end of every completed task. Only an
+explicit owner decision approves a version; approval to publish a release is
+separate. PRs, successful CI and merges do not publish a release automatically.
+
 ## Licensing first
 
 A software license has not been selected. Please discuss licensing with the owner before submitting substantive implementation code or third-party assets. Do not copy proprietary code, restricted fonts, logos or unlicensed test documents into the project. List the origin and license of any proposed dependency or fixture.

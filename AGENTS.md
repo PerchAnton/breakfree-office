@@ -2,11 +2,11 @@
 
 ## Repository role
 
-This is the documentation and brand hub. Implementations belong in the separate `PerchAnton/breakfree-docs`, `PerchAnton/breakfree-sheets` and `PerchAnton/breakfree-slides` repositories. Do not turn this repository into a monorepo or add Git submodules without an explicit owner decision.
+This is the suite integration/brand hub and a lightweight Rust launcher. Editor implementations belong in the separate `PerchAnton/breakfree-docs`, `PerchAnton/breakfree-sheets` and `PerchAnton/breakfree-slides` repositories. Do not turn this repository into a monorepo or add Git submodules without an explicit owner decision.
 
 ## Read first
 
-Read README.md, ROADMAP.md, BRAND.md and CONTRIBUTING.md. The suite is at the planning stage. No language, framework, software license or supported platform matrix has been selected.
+Read README.md, ROADMAP.md, BRAND.md and CONTRIBUTING.md. The suite is at the planning stage. The owner has mandated Rust for the core, application logic, integration and GUI. The GUI toolkit is an implementation choice within Rust; the software license and supported platform matrix remain undecided.
 
 ## Rules for changes
 
@@ -21,7 +21,62 @@ Read README.md, ROADMAP.md, BRAND.md and CONTRIBUTING.md. The suite is at the pl
 
 ## Validation
 
-There is no application build or test command yet. Check Markdown links, image paths, repository names and any YAML syntax. Report exactly which checks were run. Do not replace missing implementation with fake CI success badges.
+Use the pinned rust-toolchain.toml and Cargo.lock. Run cargo fmt --check, cargo test --locked --features test-fixtures, and cargo clippy --locked --all-targets --features test-fixtures -- -D warnings. Check Markdown links, image paths and YAML. Report executed checks separately from unexecuted Windows scaling, screen-reader and Office-reference checks. Do not replace missing evidence with fake CI success badges.
+
+## Versioning and owner approval
+
+- Follow [VERSIONING.md](VERSIONING.md). The application version has one source:
+  `[package].version` in Cargo.toml; keep Cargo.lock consistent. CLI `--version`
+  and About must continue to derive it from `CARGO_PKG_VERSION`.
+- Owner-mandated release numbering: all previews before the first ordinary
+  release use `0.1.0-alpha.N`, `0.1.0-beta.N` or `0.1.0-rc.N` (positive integer N).
+  The first ordinary published release starts at `0.2.0` (the full Cargo/SemVer
+  spelling of `0.2`). Keep this startup preview series fixed; advance its suffix
+  for a new preview instead of moving to another base version. Publishing source
+  commits or a preview does not start the ordinary-release series.
+- Increment the application version and update [CHANGELOG.md](CHANGELOG.md)
+  for every completed change set, including code, fixes, documentation, rules
+  and standalone journal updates. During the current alpha stage, increase N
+  by one. Keep Cargo.toml, Cargo.lock and current-version summaries consistent.
+- A change set includes its validation, corrections and dedicated journal commits;
+  record those under the same version. A later independent change gets the next
+  version. Read-only work with no repository changes does not require a bump.
+- End every completed-work report to the owner with the current exact version,
+  whether it changed and why, and its approval/publication status. Present the
+  version for the owner's explicit approval, including when it is unchanged.
+- Never infer version approval from silence, tests, CI, a previous version's
+  approval or permission to implement. Record an explicit approval with its
+  version, reviewed source SHA, scope, date and source; otherwise say pending.
+  Reconfirm approval when that reviewed scope changes.
+- Version approval, code review/merge and permission to publish a release are
+  separate decisions. Do not create release tags, publish binaries or a GitHub
+  release automatically. Keep released tags and contents immutable.
+- Office, each independent editor, integration protocols and visual specifications
+  have separate version histories; an Office bump does not bump the other repos.
+
+## Owner-mandated implementation and visual direction
+
+- Rust is mandatory for the core, logic, integration and GUI, not a language proposal.
+- Use Cargo, a verified pinned toolchain and locked dependencies. No JavaScript/
+  TypeScript GUI, Electron, or HTML/CSS/JS interface inside a WebView.
+- Native OS integration, configuration, resources and shaders are allowed; system
+  dependencies do not need to be rewritten in Rust.
+- Target the Windows desktop Office 2024 start screens and File/Backstage layout:
+  compact left navigation, light workspace, restrained typography and spacing,
+  real recent files, create/open actions, app cards and genuinely available templates.
+- Keep the BreakFree names, approved transparent logos and identity. Do not copy
+  Microsoft's branding, redistribute Microsoft fonts/assets, or substitute a toolkit demo theme.
+- Start with a light theme. Rainbow accents belong in the logos, not large UI surfaces.
+- Keep shared visual tokens/versioned specifications for Docs, Sheets and Slides.
+  Separate shell colors from document-content colors; consume immutable revisions,
+  without sibling-folder or mutable-main build dependencies.
+- Only verified Office 2024 images count as visual references. Record edition/build,
+  Windows version, theme, UI language, DPI and window size; mark unknown fields.
+- Acceptance requires real Windows screenshots at 100%, 125%, 150%, clipping,
+  resize, focus, menu and accessibility checks. Simulated pixel ratios on another
+  OS are additional layout tests, never Windows screenshot evidence.
+- No invented recents, templates, accounts or inert controls. Missing editors must
+  explicitly appear as not installed. Editors remain independent executables.
 
 ## Project journal
 
