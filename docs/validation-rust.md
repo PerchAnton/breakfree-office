@@ -52,7 +52,7 @@ checked. These headless checks are not native OS input/accessibility acceptance.
 | Narrator/NVDA, native Windows dialogs, high contrast and monitor transitions | NOT executed; AccessKit enablement is not proof of conformance |
 | Full per-page visual/resize/clipping review | Home captures inspected; logical layout/navigation tests run. Native Windows per-page focus/menu/dialog/resize screenshots and glyph clipping measurements remain pending |
 | Real Docs/Sheets/Slides integration | NOT executed; no real editor build configured. Create/save/reopen and content preservation belong to the independent editors |
-| Windows/Linux native build and server CI | Local host did not run them. The CI matrix is configured; actual server results must be reported separately after publication |
+| Windows/Linux native build and server CI | Not run on the local host. Published code ad58910 passed native/headless CI on all three runner labels; see the exact code-SHA evidence below. This does not establish native GUI/DPI/accessibility support |
 | Windows probe descendants | Direct child is terminated; guaranteed descendant cleanup is not implemented or tested |
 | Packaging, signing, installer and release | Not provided or published; no supported-platform claim follows from this source prototype |
 
@@ -60,3 +60,22 @@ The visual tokens are an explicit initial specification based on the owner's
 direction, not pixel measurements of an unavailable reference. The project
 license is not chosen. System fonts are not redistributed; dependency/font
 notices are retained separately. No document-format or Office-parity claim is made.
+
+## Published code CI evidence
+
+Verified at 2026-10-16T11:46:40+03:00 (Europe/Kyiv). Exact tested implementation:
+[ad58910174f8e23eefabc1f242f089e556e2399e](https://github.com/PerchAnton/breakfree-office/commit/ad58910174f8e23eefabc1f242f089e556e2399e).
+Both its [PR run](https://github.com/PerchAnton/breakfree-office/actions/runs/38875413603)
+and [push run](https://github.com/PerchAnton/breakfree-office/actions/runs/38875340218)
+completed successfully. Per-job steps and downloaded test logs were inspected.
+
+| Runner label | Test result | Other completed checks |
+| --- | --- | --- |
+| [macos-latest](https://github.com/PerchAnton/breakfree-office/actions/runs/38875413603/job/116889163517) | 22 passed, zero failures | Pinned toolchain, fmt, Clippy with warnings denied, three Rust manifest checks |
+| [windows-latest](https://github.com/PerchAnton/breakfree-office/actions/runs/38875413603/job/116889163736) | 21 passed, zero failures; UNIX-only descendant test excluded by cfg | Same; actual native Windows test fixture executable/argument transport verified |
+| [ubuntu-latest](https://github.com/PerchAnton/breakfree-office/actions/runs/38875413603/job/116889163867) | 22 passed, zero failures | Same |
+
+Subsequent commits only update documentation/journals and have separate CI runs.
+These runner results are native build/process and headless UI evidence for the
+specified code SHA, not real Windows desktop captures, Narrator/NVDA, native
+window-dialog interaction, exact OS-build support or Office 2024 visual acceptance.
