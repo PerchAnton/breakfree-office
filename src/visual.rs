@@ -1,7 +1,7 @@
 //! Visual system v1, expressed in logical device-independent pixels.
 use eframe::egui::{self, Color32, FontData, FontDefinitions, FontFamily, FontId, TextStyle};
 
-pub const VERSION: &str = "1.1.0";
+pub const VERSION: &str = "1.2.0";
 pub const NAV_WIDTH: f32 = 176.0;
 pub const ROW_HEIGHT: f32 = 40.0;
 pub const CONTENT_MARGIN: i8 = 36;
@@ -17,6 +17,12 @@ pub const SELECTED: Color32 = Color32::from_rgb(230, 230, 230);
 pub const CARD_WIDTH: f32 = 176.0;
 pub const CARD_HEIGHT: f32 = 152.0;
 pub const FILE_ROW_HEIGHT: f32 = 60.0;
+pub const FILE_ACTION_WIDTH: f32 = 38.0;
+pub const LOCATION_WIDTH: f32 = 204.0;
+pub const LOCATION_ROW_HEIGHT: f32 = 48.0;
+pub const OPEN_STACK_BELOW: f32 = 600.0;
+pub const SETTINGS_COLUMNS_AT: f32 = 600.0;
+pub const MENU_WIDTH: f32 = 220.0;
 
 pub fn apply(ctx: &egui::Context) -> String {
     let mut style = (*ctx.style()).clone();

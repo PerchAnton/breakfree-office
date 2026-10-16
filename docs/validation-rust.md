@@ -125,7 +125,9 @@ failures are not fixed by this presentation change; new CI is tracked separately
 
 ## Per-change versioning — 2026-10-16
 
-Candidate **0.1.0-alpha.2**, unreleased; exact owner approval remains pending.
+Historical alpha.2 validation session, unreleased; approval was pending at this
+check. The owner subsequently approved source f4b805e on 2026-10-16; see
+[versioning and approval](../VERSIONING.md).
 The new policy requires an application-version increment and changelog entry for
 every completed change set, including documentation. This candidate records the
 completed desktop refinement and the policy correction.
@@ -146,3 +148,36 @@ No new screenshots were taken for this version-only runtime change; existing
 images retain their actual alpha.1 labels. No new native Windows DPI, screen-reader,
 Office 2024 reference or production-editor checks were executed. Source-specific
 CI results are recorded separately in the [project log](PROJECT_LOG.md).
+
+
+## Backstage refinement / alpha.3 — 2026-10-16
+
+Application **0.1.0-alpha.3**, visual specification **1.2.0**. Alpha.2 was approved
+for source f4b805e; this new design scope is awaiting its own owner approval.
+
+On macOS arm64 / pinned Rust 1.90.0, fmt, **26 locked-feature tests** (5 contract,
+10 GUI, 9 process, 2 settings), required warning-free Clippy and the additional
+all-features Clippy check passed. CLI reports **0.1.0-alpha.3**. Cargo.lock changes
+only Office's package version; integration/settings contracts and dependencies
+are unchanged. Markdown/image paths, both YAML files, capture hashes and diff
+whitespace are checked before publication.
+
+New regression checks cover keyboard selection of the Open locations at minimum
+and default sizes; the visible per-file options menu opens with Enter, dismisses
+with Escape and removes only the selected stored record while preserving both
+actual temporary files. The existing minimum-size/zoom test now checks independent
+page scroll state. Synthetic records exist only in tests, never in the normal UI.
+
+[Native alpha.3 framebuffer captures](screenshots/desktop-v1-2/README.md) cover six
+pages, default/minimum/large windows, Home 100/125/150% session zoom, Open locations,
+menu and focus. Capture generation used an isolated build with the capture feature;
+a first attempt was interrupted by replacing that build during a separate CLI
+check and was repeated. Only completed captures are inventoried.
+
+Visual inspection checks the selected location, menu shortcut alignment, settings
+columns, missing-editor labels, transparent mark, reflow and visible scrolling.
+At minimum size / 150% session zoom, lower content requires scrolling. Real recent
+files with production editors, actual Windows 100/125/150% OS scaling, native
+screen readers/dialogs and certified Office 2024 Start/Backstage comparison remain
+unexecuted. No measured match or supported-platform/release claim follows from
+these macOS images. Source-specific CI is recorded in the [project log](PROJECT_LOG.md).

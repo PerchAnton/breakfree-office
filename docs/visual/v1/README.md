@@ -1,6 +1,6 @@
 # BreakFree desktop visual system v1
 
-Version: **1.1.0**. This specification applies to Office, Docs, Sheets and Slides.
+Version: **1.2.0**. This specification applies to Office, Docs, Sheets and Slides.
 The required visual target is the Windows desktop Office 2024 Start and
 File/Backstage experience, with BreakFree identity. Values in
 [tokens.json](tokens.json) are explicit initial implementation values, not falsely
@@ -82,3 +82,26 @@ with Escape. Pictograms and paper/grid previews are drawn in Rust, not imported
 Microsoft assets. [Actual captures](../../screenshots/desktop-v1-1/README.md)
 and regression checks accompany this revision. No verified Office 2024
 Start/Backstage pixel measurements or Windows acceptance are asserted.
+
+## 1.2.0 Backstage and desktop controls
+
+Open uses a 204-DIP location list with 48-DIP selected rows for Recent documents
+and This computer, plus a working Browse command. The right pane shows actual
+recents or local-file browsing; it contains no cloud placeholders. Below 600 DIP
+of content width, locations stack above the selected content. Each main page
+retains its own scroll position rather than inheriting another page's offset.
+
+Recent rows reserve a separate 38-DIP action column. The visible options button
+has a unique full-path accessible label, Tab/Enter access and Escape dismissal.
+Removal changes history only; it never deletes the file. Existing right-click
+removal is retained. File-menu commands use a separate aligned shortcut column
+and a minimum width of 220 DIP.
+
+Settings align editor identity/status and setup actions in two columns at 600 DIP
+and above, stacking below that width. Forget location appears only for configured
+paths. Appearance groups the implemented session-zoom setting. Original Rust-drawn
+computer/file glyphs use the same restrained stroke and shell colors. No new
+Microsoft assets, fonts, accounts or unsupported editor actions are introduced.
+
+See [alpha.3 macOS captures](../../screenshots/desktop-v1-2/README.md). Dimensions
+remain provisional until matched Windows Office 2024 reference evidence exists.

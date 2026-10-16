@@ -45,3 +45,10 @@ See [visual-system 1.1.0 captures](desktop-v1-1/README.md) recorded with
 The [current candidate](../../VERSIONING.md) advances independently of these
 historical images; their original version labels are preserved.
 The images above remain historical evidence of the initial prototype.
+
+
+## Alpha.3 / visual 1.2.0
+
+[Current native macOS captures](desktop-v1-2/README.md) cover the Backstage
+location list, compact settings, menu shortcuts and the six-page shell. Earlier
+sessions above retain their original source/version labels.

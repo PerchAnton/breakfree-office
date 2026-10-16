@@ -28,7 +28,7 @@
 > [!IMPORTANT]
 > **Rust launcher prototype under review.** Rust is mandatory for the core, application logic, integration and GUI. Office is a lightweight native launcher as well as the specification/brand hub; the independent editors and installers are not supplied here. No verified Microsoft Office compatibility or Windows visual acceptance is claimed.
 
-**Current application version: `0.1.0-alpha.2` — unreleased; owner approval pending.**
+**Current application version: `0.1.0-alpha.3` — unreleased; owner approval pending.**
 The version comes from Cargo.toml and is shown by `--version` and About.
 All initial alpha, beta and RC versions use the `0.1.0` base; the first ordinary
 published release is planned as `0.2.0` (short form `0.2`).
@@ -99,13 +99,14 @@ fake templates or accounts are shown. The approved logo retains transparency.
 On macOS choose the binary inside an `.app` bundle, on Windows an `.exe` file.
 No Python runtime, JavaScript frontend, Electron or WebView is used.
 
-The current desktop refinement uses visual specification **1.1.0**: compact icon
-navigation, blank-file previews, searchable real recents and a local Open pane.
+The current desktop refinement uses visual specification **1.2.0**: compact icon
+navigation, blank-file previews, searchable real recents, a Backstage-style Open
+location list, keyboard-accessible recent actions and compact editor settings.
 
-![Running Rust Home screen on macOS, light theme, 100% app zoom](docs/screenshots/desktop-v1-1/macos-home-100-default.png)
+![Running Rust Open screen on macOS, light theme, 100% app zoom](docs/screenshots/desktop-v1-2/macos-open-100-default.png)
 
 Actual macOS prototype capture, not a Windows or Microsoft Office reference.
-See the [capture inventory and limitations](docs/screenshots/desktop-v1-1/README.md).
+See the [alpha.3 capture inventory and limitations](docs/screenshots/desktop-v1-2/README.md).
 
 See [architecture](docs/architecture.md), [Rust decision](docs/adr/0002-rust-native-shell.md),
 [visual system v1](docs/visual/v1/README.md), [reference inventory](docs/visual/v1/reference.md)

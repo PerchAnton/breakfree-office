@@ -11,7 +11,7 @@ use std::{
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum Page {
     Home,
     New,
@@ -41,6 +41,12 @@ impl Page {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum OpenLocation {
+    Recent,
+    Computer,
+}
+
 enum Job {
     Refresh,
     Configure(usize, PathBuf),
@@ -66,6 +72,7 @@ pub struct OfficeApp {
     apps: [AppState; 3],
     recent: Vec<Recent>,
     recent_query: String,
+    open_location: OpenLocation,
     receiver: Option<mpsc::Receiver<Update>>,
     notice: String,
     error: bool,
@@ -142,6 +149,18 @@ impl OfficeApp {
             apps,
             recent,
             recent_query: String::new(),
+            open_location: {
+                #[cfg(feature = "validation-capture")]
+                if std::env::var("BREAKFREE_CAPTURE_STATE").as_deref() == Ok("computer") {
+                    OpenLocation::Computer
+                } else {
+                    OpenLocation::Recent
+                }
+                #[cfg(not(feature = "validation-capture"))]
+                {
+                    OpenLocation::Recent
+                }
+            },
             receiver: None,
             notice,
             error,
@@ -249,18 +268,22 @@ impl OfficeApp {
                 ui.visuals_mut().button_frame = false;
                 ui.horizontal(|ui| {
                     let _file_menu = ui.menu_button("File", |ui| {
+                        ui.set_min_width(visual::MENU_WIDTH);
                         if ui.button("Home").clicked() {
                             self.page = Page::Home;
                             ui.close();
                         }
-                        if ui.button(format!("New\t{}", command_hint("N"))).clicked() {
+                        if ui
+                            .add(egui::Button::new("New").shortcut_text(command_hint("N")))
+                            .clicked()
+                        {
                             self.page = Page::New;
                             ui.close();
                         }
                         if ui
                             .add_enabled(
                                 !self.busy() && self.registry.is_some(),
-                                egui::Button::new(format!("Open…\t{}", command_hint("O"))),
+                                egui::Button::new("Open…").shortcut_text(command_hint("O")),
                             )
                             .clicked()
                         {
@@ -402,7 +425,7 @@ impl OfficeApp {
         egui::CentralPanel::default()
             .frame(egui::Frame::new().fill(visual::BG).inner_margin(visual::CONTENT_MARGIN))
             .show(ctx, |ui| {
-                egui::ScrollArea::vertical().id_salt("page-content").auto_shrink([false, false]).show(ui, |ui| {
+                egui::ScrollArea::vertical().id_salt(("page-content", self.page)).auto_shrink([false, false]).show(ui, |ui| {
                     ui.heading(self.page.label());
                     ui.add_space(24.0);
                     if self.error {
@@ -581,41 +604,73 @@ impl OfficeApp {
     }
 
     fn open_page(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
-        // A narrow viewport stacks the location pane above the files, rather than clipping it.
-        if ui.available_width() < 620.0 {
-            self.local_location(ui, ctx);
-            ui.add_space(24.0);
-            self.recent_files(ui, ctx, false);
+        if ui.available_width() < visual::OPEN_STACK_BELOW {
+            self.open_locations(ui, ctx);
+            ui.add_space(16.0);
+            ui.separator();
+            ui.add_space(16.0);
+            self.open_content(ui, ctx);
         } else {
             ui.horizontal_top(|ui| {
                 ui.allocate_ui_with_layout(
-                    egui::vec2(198.0, 220.0),
+                    egui::vec2(visual::LOCATION_WIDTH, 180.0),
                     Layout::top_down(Align::Min),
-                    |ui| self.local_location(ui, ctx),
+                    |ui| self.open_locations(ui, ctx),
                 );
                 ui.separator();
-                ui.add_space(16.0);
-                ui.vertical(|ui| self.recent_files(ui, ctx, false));
+                ui.add_space(20.0);
+                ui.vertical(|ui| self.open_content(ui, ctx));
             });
         }
     }
 
-    fn local_location(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
-        section(ui, "This computer");
+    fn open_locations(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        for (location, label, icon) in [
+            (OpenLocation::Recent, "Recent documents", Glyph::Clock),
+            (OpenLocation::Computer, "This computer", Glyph::Computer),
+        ] {
+            if location_button(ui, label, icon, self.open_location == location).clicked() {
+                self.open_location = location;
+            }
+        }
         ui.add_space(12.0);
-        ui.label(
-            RichText::new("Open a local document, spreadsheet or presentation.")
-                .color(visual::MUTED),
-        );
-        ui.add_space(12.0);
-        if button(
-            ui,
-            "Browse this computer…",
-            !self.busy() && self.registry.is_some(),
-        )
-        .clicked()
-        {
+        ui.separator();
+        ui.add_space(8.0);
+        if button(ui, "Browse…", !self.busy() && self.registry.is_some()).clicked() {
             self.open_picker(ctx);
+        }
+    }
+
+    fn open_content(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        match self.open_location {
+            OpenLocation::Recent => self.recent_files(ui, ctx, false),
+            OpenLocation::Computer => {
+                section(ui, "Local files");
+                ui.add_space(12.0);
+                ui.label("Choose a file on this computer or a connected drive.");
+                ui.label(
+                    RichText::new("Documents open in a configured BreakFree editor.")
+                        .small()
+                        .color(visual::MUTED),
+                );
+                ui.add_space(20.0);
+                if button(
+                    ui,
+                    "Browse this computer…",
+                    !self.busy() && self.registry.is_some(),
+                )
+                .clicked()
+                {
+                    self.open_picker(ctx);
+                }
+                if self.apps.iter().all(|app| app.manifest.is_none()) {
+                    ui.add_space(16.0);
+                    ui.label(RichText::new("No editors are installed.").color(visual::MUTED));
+                    if ui.link("Set up editors").clicked() {
+                        self.page = Page::Settings;
+                    }
+                }
+            }
         }
     }
 
@@ -756,9 +811,9 @@ impl OfficeApp {
             egui::FontId::proportional(12.0),
             visual::MUTED,
         );
-        if width >= 330.0 {
+        if width >= 330.0 + visual::FILE_ACTION_WIDTH {
             ui.painter().text(
-                header.right_center() - egui::vec2(12.0, 0.0),
+                header.right_center() - egui::vec2(12.0 + visual::FILE_ACTION_WIDTH, 0.0),
                 egui::Align2::RIGHT_CENTER,
                 "Last opened",
                 egui::FontId::proportional(12.0),
@@ -809,10 +864,38 @@ impl OfficeApp {
             let response = ui
                 .push_id(&entry.path, |ui| {
                     ui.add_enabled_ui(enabled, |ui| {
-                        let (rect, response) = ui.allocate_exact_size(
+                        let (row, _) = ui.allocate_exact_size(
                             egui::vec2(ui.available_width(), visual::FILE_ROW_HEIGHT),
-                            Sense::click(),
+                            Sense::hover(),
                         );
+                        let rect = egui::Rect::from_min_max(
+                            row.min,
+                            row.max - egui::vec2(visual::FILE_ACTION_WIDTH, 0.0),
+                        );
+                        let response = ui.interact(rect, ui.id().with("open"), Sense::click());
+                        let actions = egui::Rect::from_min_size(
+                            egui::pos2(rect.right() + 4.0, row.center().y - 15.0),
+                            egui::vec2(30.0, 30.0),
+                        );
+                        ui.scope_builder(egui::UiBuilder::new().max_rect(actions), |ui| {
+                            ui.spacing_mut().button_padding = egui::vec2(4.0, 5.0);
+                            let menu = ui.menu_button("⋯", |ui| {
+                                ui.set_min_width(visual::MENU_WIDTH);
+                                if button(ui, "Remove from recent list", enabled).clicked() {
+                                    self.start(Job::RemoveRecent(Some(entry.path.clone())), ctx);
+                                    ui.close();
+                                }
+                            });
+                            menu.response.widget_info(|| {
+                                egui::WidgetInfo::labeled(
+                                    egui::WidgetType::Button,
+                                    enabled,
+                                    format!("More options for {}", entry.path.display()),
+                                )
+                            });
+                            focus(ui, &menu.response);
+                            menu.response.on_hover_text("More options");
+                        });
                         response.widget_info(|| {
                             egui::WidgetInfo::labeled(
                                 egui::WidgetType::Button,
@@ -901,52 +984,29 @@ impl OfficeApp {
         ui.add_space(18.0);
         let enabled = !self.busy() && self.registry.is_some();
         for (i, name) in APP_NAMES.iter().enumerate() {
-            ui.label(RichText::new(*name).strong());
-            let state = &self.apps[i];
-            if let Some(manifest) = &state.manifest {
-                ui.label(format!("Ready · {}", manifest.app_version));
-            } else {
-                ui.label(
-                    RichText::new(state.error.as_deref().unwrap_or("Not installed"))
-                        .color(visual::MUTED),
-                );
-            }
-            if let Some(path) = &state.path {
-                ui.add(egui::Label::new(path.display().to_string()).wrap());
-            }
-            let has_path = state.path.is_some();
-            ui.horizontal_wrapped(|ui| {
-                if button(
-                    ui,
-                    &format!(
-                        "Choose {} executable…",
-                        name.trim_start_matches("BreakFree ")
-                    ),
-                    enabled,
-                )
-                .clicked()
-                {
-                    let dialog = rfd::FileDialog::new()
-                        .set_title(format!("Choose a trusted {name} executable"));
-                    #[cfg(windows)]
-                    let dialog = dialog.add_filter("Executable", &["exe"]);
-                    if let Some(path) = dialog.pick_file() {
-                        self.start(Job::Configure(i, path), ctx);
-                    }
-                }
-                ui.push_id(i, |ui| {
-                    if button(ui, "Forget location", enabled && has_path).clicked() {
-                        self.start(Job::Forget(i), ctx);
+            egui::Frame::new()
+                .inner_margin(egui::Margin::symmetric(0, 10))
+                .show(ui, |ui| {
+                    if ui.available_width() >= visual::SETTINGS_COLUMNS_AT {
+                        ui.columns(2, |columns| {
+                            self.editor_details(&mut columns[0], i, name);
+                            self.editor_actions(&mut columns[1], ctx, i, name, enabled);
+                        });
+                    } else {
+                        self.editor_details(ui, i, name);
+                        ui.add_space(8.0);
+                        self.editor_actions(ui, ctx, i, name, enabled);
                     }
                 });
-            });
-            ui.add_space(14.0);
             ui.separator();
         }
+        ui.add_space(8.0);
         if button(ui, "Check installed editors", enabled).clicked() {
             self.start(Job::Refresh, ctx);
         }
-        ui.add_space(22.0);
+        ui.add_space(24.0);
+        section(ui, "Appearance");
+        ui.add_space(12.0);
         ui.horizontal(|ui| {
             ui.label("Interface zoom");
             let old = self.zoom;
@@ -973,12 +1033,116 @@ impl OfficeApp {
             .color(visual::MUTED),
         );
     }
+    fn editor_details(&self, ui: &mut egui::Ui, i: usize, name: &str) {
+        ui.horizontal(|ui| {
+            let (rect, _) = ui.allocate_exact_size(egui::vec2(28.0, 32.0), Sense::hover());
+            file_symbol(ui.painter(), rect.center(), i);
+            ui.vertical(|ui| {
+                ui.label(RichText::new(name).strong());
+                let state = &self.apps[i];
+                let status = state
+                    .manifest
+                    .as_ref()
+                    .map(|m| format!("Ready · {}", m.app_version))
+                    .unwrap_or_else(|| state.error.as_deref().unwrap_or("Not installed").into());
+                ui.label(RichText::new(status).small().color(visual::MUTED));
+            });
+        });
+        if let Some(path) = &self.apps[i].path {
+            ui.add(egui::Label::new(RichText::new(path.display().to_string()).small()).wrap());
+        }
+    }
+
+    fn editor_actions(
+        &mut self,
+        ui: &mut egui::Ui,
+        ctx: &egui::Context,
+        i: usize,
+        name: &str,
+        enabled: bool,
+    ) {
+        ui.horizontal_wrapped(|ui| {
+            if button(
+                ui,
+                &format!(
+                    "Choose {} executable…",
+                    name.trim_start_matches("BreakFree ")
+                ),
+                enabled,
+            )
+            .clicked()
+            {
+                let dialog =
+                    rfd::FileDialog::new().set_title(format!("Choose a trusted {name} executable"));
+                #[cfg(windows)]
+                let dialog = dialog.add_filter("Executable", &["exe"]);
+                if let Some(path) = dialog.pick_file() {
+                    self.start(Job::Configure(i, path), ctx);
+                }
+            }
+            if self.apps[i].path.is_some() {
+                ui.push_id(i, |ui| {
+                    if button(ui, "Forget location", enabled).clicked() {
+                        self.start(Job::Forget(i), ctx);
+                    }
+                });
+            }
+        });
+    }
 }
 
 impl eframe::App for OfficeApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         self.render(ctx);
     }
+}
+
+fn location_button(ui: &mut egui::Ui, label: &str, icon: Glyph, selected: bool) -> egui::Response {
+    let (rect, response) = ui.allocate_exact_size(
+        egui::vec2(ui.available_width(), visual::LOCATION_ROW_HEIGHT),
+        Sense::click(),
+    );
+    response.widget_info(|| {
+        egui::WidgetInfo::selected(
+            egui::WidgetType::SelectableLabel,
+            ui.is_enabled(),
+            selected,
+            label,
+        )
+    });
+    if selected || response.hovered() {
+        ui.painter().rect_filled(
+            rect,
+            2,
+            if selected {
+                visual::SELECTED
+            } else {
+                visual::HOVER
+            },
+        );
+    }
+    if selected {
+        ui.painter().vline(
+            rect.left() + 1.0,
+            rect.top() + 10.0..=rect.bottom() - 10.0,
+            egui::Stroke::new(2.0, visual::ACCENT),
+        );
+    }
+    draw_glyph(
+        ui.painter(),
+        rect.left_center() + egui::vec2(22.0, 0.0),
+        icon,
+        visual::INK,
+    );
+    ui.painter().text(
+        rect.left_center() + egui::vec2(44.0, 0.0),
+        egui::Align2::LEFT_CENTER,
+        label,
+        egui::FontId::proportional(14.0),
+        visual::INK,
+    );
+    focus(ui, &response);
+    response
 }
 
 fn button(ui: &mut egui::Ui, label: &str, enabled: bool) -> egui::Response {
@@ -1047,6 +1211,7 @@ enum Glyph {
     New,
     Folder,
     Clock,
+    Computer,
     Settings,
     Info,
 }
@@ -1062,6 +1227,16 @@ fn draw_glyph(p: &egui::Painter, center: egui::Pos2, icon: Glyph, color: Color32
         ));
     };
     match icon {
+        Glyph::Computer => {
+            p.rect_stroke(
+                egui::Rect::from_center_size(center - egui::vec2(0.0, 2.0), egui::vec2(18.0, 12.0)),
+                1,
+                stroke,
+                egui::StrokeKind::Inside,
+            );
+            line(&[(0.0, 4.0), (0.0, 8.0)]);
+            line(&[(-5.0, 8.0), (5.0, 8.0)]);
+        }
         Glyph::Home => {
             line(&[(-9.0, -1.0), (0.0, -8.0), (9.0, -1.0)]);
             line(&[

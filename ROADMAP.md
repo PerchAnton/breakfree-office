@@ -21,8 +21,8 @@
 | Contract v1 | Independent editor boundaries | Schema, strict JSON/identity/semantic checks, examples and rejection tests | Existing v1 preserved and ported to Rust; see validation evidence |
 | Rust shell | Mandatory Rust; pinned Cargo/toolchain | Real create/open/configuration; no-editor state; bounded background probes; direct arguments; real recents | Implemented for review; no production release |
 | Certified visual baseline (V1) | Real Office 2024 on Windows | Start/Backstage screenshots with edition/build, theme, language, scale and window dimensions | Pending; only official Office 2024 theme illustration verified |
-| Common visual system (V2) | V1 direction; own identity | Versioned density, fonts, colors, component states; compact six-page light shell; transparent mark | v1.1.0 desktop refinement implemented; fixed-width previews, icon navigation, recent-file search/table and responsive Open pane; exact reference measurements pending |
-| Keyboard/layout (V3) | V2 | Focus/menu/shortcut checks and no clipped required controls at minimum/default/large layouts | 8 GUI checks include 100/125/150% logical DPI, minimum-size session zoom, resize/reflow, keyboard menu/focus and recent filtering; macOS captures inspected; native Windows acceptance pending |
+| Common visual system (V2) | V1 direction; own identity | Versioned density, fonts, colors, component states; compact six-page light shell; transparent mark | v1.2.0 implemented; Backstage location selection, compact settings, keyboard-accessible recent actions and aligned menu shortcuts; exact reference measurements pending |
+| Keyboard/layout (V3) | V2 | Focus/menu/shortcut checks and no clipped required controls at minimum/default/large layouts | 10 GUI checks include 100/125/150% logical DPI, minimum-size session zoom, resize/reflow, keyboard menu/focus, location selection, recent filtering and non-destructive record removal; macOS captures inspected; native Windows acceptance pending |
 | Windows scale/accessibility (V4) | Certified baseline; real Windows prototype | Screenshots at 100%, 125%, 150%; resize, clipping, focus, menus, native dialogs, Narrator/NVDA and matched-reference comparison | Not executed; Windows environment unavailable |
 | Independent editor adoption (V5) | Reviewed immutable contract/visual revision; real editor builds | Docs first, then Sheets/Slides; standalone save/reopen plus Office dispatch; real-build/version matrix | Pending; fixtures do not establish editor integration |
 | Content/common settings | Validated editor/version matrix | Separate versioned exchange/settings contract, preservation tests and demonstrated reuse | Not started |
@@ -78,7 +78,9 @@ Extract genuinely reusable components only after more than one application needs
   preview scheme and reserve `0.2.0` for the first ordinary published release.
 - [x] Require a version increment and changelog entry for every completed change
   set, including documentation; keep related validation/journal commits together.
-- [ ] Obtain explicit owner approval of the current `0.1.0-alpha.2` candidate and its
+- [x] Record owner approval of `0.1.0-alpha.2` at reviewed source
+  [f4b805e](https://github.com/PerchAnton/breakfree-office/commit/f4b805e73549584edf6efdc6e2282f39657f692c); merge/publication remain separate.
+- [ ] Obtain explicit owner approval of the current `0.1.0-alpha.3` candidate and its
   reviewed source revision; report the current version after every task.
 - [ ] Test installation, upgrade, uninstallation and file associations on declared targets.
 - [ ] Publish real build artifacts, checksums, release notes and known issues.

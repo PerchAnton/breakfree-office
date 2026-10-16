@@ -193,6 +193,16 @@ fn zoomed_minimum_window_keeps_navigation_reachable_and_cards_inside_content() {
             setup.min.y >= 32.0 * zoom && setup.max.y <= 574.0,
             "Setup link must scroll into view at {zoom}: {setup:?}"
         );
+        // Scrolling Home must not make the next page start halfway down its content.
+        harness.state_mut().page = Page::Settings;
+        harness.run();
+        let first_setting = harness.get_by_label("Choose Docs executable…").rect();
+        assert!(
+            first_setting.min.y >= 32.0 * zoom && first_setting.max.y <= 574.0,
+            "Settings must start at the top, independently of Home: {first_setting:?}"
+        );
+        harness.state_mut().page = Page::Home;
+        harness.run();
         harness.set_size(egui::vec2(1440.0, 900.0));
         harness.run();
         let top = harness.get_by_label("Blank document").rect().top();
@@ -250,4 +260,100 @@ fn recent_search_filters_existing_records_and_can_be_cleared_without_mutation() 
         assert!(harness.query_by_label(label).is_some());
     }
     assert_eq!(std::fs::read(&file).unwrap(), original);
+}
+
+#[test]
+fn backstage_locations_switch_with_keyboard_and_reflow_at_small_sizes() {
+    for size in [[880.0, 600.0], [1120.0, 760.0]] {
+        let dir = tempfile::tempdir().unwrap();
+        let mut harness = Harness::builder()
+            .with_size(size)
+            .build_eframe(|cc| OfficeApp::new(&cc.egui_ctx, dir.path().join("settings.json")));
+        harness.state_mut().page = Page::Open;
+        harness.run();
+        assert!(harness.query_by_label("No recent files").is_some());
+        harness
+            .get_by_role_and_label(Role::Button, "This computer")
+            .focus();
+        harness.run();
+        harness.key_press(Key::Enter);
+        harness.run();
+        assert!(harness.query_by_label("Local files").is_some());
+        assert!(harness.query_by_label("Browse this computer…").is_some());
+        assert!(harness.query_by_label("No recent files").is_none());
+        let browse = harness.get_by_label("Browse this computer…").rect();
+        assert!(browse.max.x <= size[0] && browse.max.y <= size[1]);
+        harness.get_by_label("Recent documents").focus();
+        harness.run();
+        harness.key_press(Key::Space);
+        harness.run();
+        assert!(harness.query_by_label("No recent files").is_some());
+        assert!(harness.query_by_label("Local files").is_none());
+    }
+}
+
+#[test]
+fn recent_options_work_from_keyboard_and_remove_only_the_selected_record() {
+    use breakfree_office::registry::{Recent, Settings};
+    let dir = tempfile::tempdir().unwrap();
+    let paths = [dir.path().join("First.txt"), dir.path().join("Second.txt")];
+    for path in &paths {
+        std::fs::write(path, b"Unchanged test content").unwrap();
+    }
+    let settings = Settings {
+        recent: paths
+            .iter()
+            .map(|path| Recent {
+                path: path.clone(),
+                app_id: "breakfree.docs".into(),
+                opened_at: 1,
+            })
+            .collect(),
+        ..Default::default()
+    };
+    let file = dir.path().join("settings.json");
+    std::fs::write(&file, serde_json::to_vec(&settings).unwrap()).unwrap();
+    let mut harness = Harness::builder()
+        .with_size([1120.0, 760.0])
+        .build_eframe(|cc| OfficeApp::new(&cc.egui_ctx, file.clone()));
+    harness.state_mut().page = Page::Recent;
+    harness.run();
+    let action_label = format!("More options for {}", paths[0].display());
+    let open_label = format!("Open {}", paths[0].display());
+    let action = harness.get_by_label(&action_label);
+    assert!(action.rect().left() >= harness.get_by_label(&open_label).rect().right());
+    action.focus();
+    harness.run();
+    harness.key_press(Key::Enter);
+    harness.run();
+    assert!(harness.query_by_label("Remove from recent list").is_some());
+    harness.key_press(Key::Escape);
+    harness.run();
+    assert!(harness.query_by_label("Remove from recent list").is_none());
+    harness.get_by_label(&action_label).focus();
+    harness.run();
+    harness.key_press(Key::Enter);
+    harness.run();
+    harness.get_by_label("Remove from recent list").focus();
+    harness.run();
+    harness.key_press(Key::Enter);
+    for _ in 0..100 {
+        harness.step();
+        if harness.query_by_label(&open_label).is_none() {
+            break;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
+    assert!(harness.query_by_label(&open_label).is_none());
+    assert!(
+        harness
+            .query_by_label(&format!("Open {}", paths[1].display()))
+            .is_some()
+    );
+    let saved: Settings = serde_json::from_slice(&std::fs::read(file).unwrap()).unwrap();
+    assert_eq!(saved.recent.len(), 1);
+    assert_eq!(saved.recent[0].path, paths[1]);
+    for path in paths {
+        assert_eq!(std::fs::read(path).unwrap(), b"Unchanged test content");
+    }
 }

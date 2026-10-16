@@ -34,3 +34,13 @@ releases. It is behavioral context only, not an authenticated Office 2024 baseli
 Version 1.1.0 improves the owner-directed layout and density without upgrading the
 reference status. Build/theme/language/scale/window proof for actual Office 2024
 Start/Backstage is still required before any measured visual-match claim.
+
+
+## Alpha.3 / visual 1.2.0 reference check — 2026-10-16
+
+Microsoft's Office 2024 article still identifies the new default theme, while the
+Backstage help article explicitly labels the illustrated Start page as Office 365.
+The latter describes file locations, recent-file search and list removal, which
+inform this iteration's behavior. It remains mixed-version guidance, not a
+verified Office 2024 image baseline. No unverified screenshot has been adopted,
+and edition/build/theme/language/Windows-scale/window proof remains unavailable.

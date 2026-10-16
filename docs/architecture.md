@@ -48,3 +48,11 @@ card columns are calculated from available logical space. The capture feature
 can select page, zoom, window size, menu/focus state and an isolated settings
 path for repeatable own-window evidence. These controls are absent from the
 normal build. Real Windows scaling and screen-reader acceptance remain open.
+
+
+Visual specification [v1.2.0](visual/v1/README.md) adds local Open-location state,
+per-page scroll state and a keyboard-accessible recent-row action menu. These are
+Rust GUI state only; integration protocol v1 and persisted settings version 1
+remain unchanged. Recent removal uses the existing registry operation and does
+not delete documents. Settings details/actions reflow without changing executable
+trust, capability verification or launch behavior.

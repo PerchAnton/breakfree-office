@@ -5,10 +5,18 @@ This policy governs future releases; it does not publish or approve one.
 
 ## Current candidate and source of truth
 
-The current application version is **`0.1.0-alpha.2`**, an **unreleased alpha
+The current application version is **`0.1.0-alpha.3`**, an **unreleased alpha
 candidate awaiting owner approval**. The earlier internal `0.2.0` designation
 was never released and is superseded by the owner's preview-numbering decision.
 [CHANGELOG.md](CHANGELOG.md) records the candidate's scope.
+
+The owner explicitly approved **0.1.0-alpha.2** on 2026-10-16 for reviewed
+source [f4b805e73549584edf6efdc6e2282f39657f692c](https://github.com/PerchAnton/breakfree-office/commit/f4b805e73549584edf6efdc6e2282f39657f692c):
+the Rust launcher, visual system 1.1.0 desktop refinement and per-change versioning
+policy presented in PR #2. Source: the owner's explicit approval in the project
+conversation; the decision is summarized without reproducing correspondence.
+This is version/scope approval, not merge or publication authorization. The new
+alpha.3 design scope requires its own approval. See the [project log](docs/PROJECT_LOG.md).
 
 [`[package].version` in Cargo.toml](Cargo.toml) is the only application-version
 source. Cargo.lock records the same package version. CLI `--version` and About

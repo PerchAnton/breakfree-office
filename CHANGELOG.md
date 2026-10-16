@@ -6,11 +6,33 @@ Version selection and owner approval follow [VERSIONING.md](VERSIONING.md).
 
 ## Unreleased
 
-**Candidate: `0.1.0-alpha.2`. Owner approval pending; no release published.**
+**Candidate: `0.1.0-alpha.3`. Owner approval pending; no release published.**
 All initial alpha/beta/RC versions use the `0.1.0` base. The first ordinary
 published release is reserved as `0.2.0` (short form `0.2`).
 
-### 0.1.0-alpha.2 — current candidate
+### 0.1.0-alpha.3 — current candidate
+
+#### Changed
+
+- Refine Open into a Backstage-style location list with selected Recent documents
+  and This computer views, native Browse actions and responsive stacking.
+- Align File-menu shortcut hints in a separate column and keep compact menu sizing.
+- Add a visible, keyboard-accessible options menu to each real recent-file row;
+  removal changes the list only and preserves the document.
+- Compact editor setup into aligned details/actions on wide windows, stacking
+  at narrow widths; group Appearance controls and keep per-page scroll positions.
+- Advance the shared visual specification to 1.2.0 and the Cargo application
+  version to 0.1.0-alpha.3. Existing alpha.1 captures remain historical evidence.
+- Record explicit owner approval of alpha.2 at source f4b805e; alpha.3
+  remains awaiting approval. No merge, release tag or binary publication.
+
+### 0.1.0-alpha.2 — approved, unreleased
+
+Owner-approved on 2026-10-16 for reviewed source
+[f4b805e73549584edf6efdc6e2282f39657f692c](https://github.com/PerchAnton/breakfree-office/commit/f4b805e73549584edf6efdc6e2282f39657f692c);
+scope: Rust launcher, visual 1.1.0 desktop refinement and per-change version policy.
+Approval was given explicitly in the project conversation; release publication
+and PR merge were not authorized.
 
 #### Changed
 
@@ -19,7 +41,8 @@ published release is reserved as `0.2.0` (short form `0.2`).
   updates. Related checks and journal commits complete the same versioned change.
 - Advance Cargo.toml/Cargo.lock to `0.1.0-alpha.2`; CLI/About derive the new version
   from Cargo. Update current documentation and retire the documentation-only bump
-  exception. Exact candidate approval and release publication remain pending.
+  exception. Approval was pending at implementation; the later alpha.2 decision
+  is recorded above. Release publication remains pending.
 - Refine the desktop shell with visual specification 1.1.0: compact icon navigation,
   bottom-aligned Settings/About, white workspace, blank-file previews with explicit
   column reflow, aligned recent rows and a two-pane Open view.
