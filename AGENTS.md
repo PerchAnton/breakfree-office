@@ -22,3 +22,23 @@ Read README.md, ROADMAP.md, BRAND.md and CONTRIBUTING.md. The suite is at the pl
 ## Validation
 
 There is no application build or test command yet. Check Markdown links, image paths, repository names and any YAML syntax. Report exactly which checks were run. Do not replace missing implementation with fake CI success badges.
+
+## Project journal
+
+- Keep this project's public journal in `docs/PROJECT_LOG.md`. Update it after
+  significant stages and requested checks, using dedicated commits and the
+  branch/PR workflow. Preserve other authors' work and never force push.
+- Keep public prose in English. Retain work/check history and the sections
+  Current state, Work and checks, Comments and reviews, Offers and requests for
+  help, Next actions and Check history. Use tables for events and actions.
+- Record Europe/Kyiv timestamps, source commit/PR/issue links, actual checks and
+  limitations. Distinguish code readiness, local tests, CI, merge and release.
+- Check issues, PR conversations, reviews, inline threads and Discussions when
+  enabled, including new replies on older objects. Record source coverage and
+  unavailable sources; absence of a check is not evidence of no events.
+- Record each event's @author, human/bot identity, date, direct URL, requested
+  action and handling status. Keep help offers and requests separate. Do not
+  infer assignments from offers, stars or forks; confirm assignees explicitly.
+- Reconcile history without loss and update an event by its source URL rather
+  than duplicating it. Do not send public replies or invitations without a
+  separate owner instruction. No scheduled monitoring is implied.
