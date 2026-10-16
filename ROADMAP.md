@@ -74,7 +74,9 @@ Extract genuinely reusable components only after more than one application needs
 
 - [x] Establish [SemVer and owner approval rules](VERSIONING.md), a single Cargo
   version source and an [unreleased changelog](CHANGELOG.md).
-- [ ] Obtain explicit owner approval of the current `0.2.0` candidate and its
+- [x] Record the owner's `0.1.0-alpha.N` → `0.1.0-beta.N` → `0.1.0-rc.N`
+  preview scheme and reserve `0.2.0` for the first ordinary published release.
+- [ ] Obtain explicit owner approval of the current `0.1.0-alpha.1` candidate and its
   reviewed source revision; report the current version after every task.
 - [ ] Test installation, upgrade, uninstallation and file associations on declared targets.
 - [ ] Publish real build artifacts, checksums, release notes and known issues.
@@ -88,6 +90,8 @@ scope; required checks and known limitations are recorded for the release SHA;
 publication is explicitly authorized; the immutable `v<version>` tag, Cargo
 version, release notes, artifact names and checksums agree. Version approval by
 itself does not complete the other gates. No release is currently published.
+The first ordinary release uses `0.2.0`; alpha/beta/RC previews keep the `0.1.0`
+base under the [owner's numbering policy](VERSIONING.md#choosing-the-next-version).
 
 ## Not promised for the first release
 

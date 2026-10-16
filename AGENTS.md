@@ -28,6 +28,12 @@ Use the pinned rust-toolchain.toml and Cargo.lock. Run cargo fmt --check, cargo 
 - Follow [VERSIONING.md](VERSIONING.md). The application version has one source:
   `[package].version` in Cargo.toml; keep Cargo.lock consistent. CLI `--version`
   and About must continue to derive it from `CARGO_PKG_VERSION`.
+- Owner-mandated release numbering: all previews before the first ordinary
+  release use `0.1.0-alpha.N`, `0.1.0-beta.N` or `0.1.0-rc.N` (positive integer N).
+  The first ordinary published release starts at `0.2.0` (the full Cargo/SemVer
+  spelling of `0.2`). Keep this startup preview series fixed; advance its suffix
+  for a new preview instead of moving to another base version. Publishing source
+  commits or a preview does not start the ordinary-release series.
 - Maintain [CHANGELOG.md](CHANGELOG.md) for the current unreleased candidate.
   Do not bump the version for every task or documentation/journal update.
   Propose a justified SemVer change when the release scope requires one.

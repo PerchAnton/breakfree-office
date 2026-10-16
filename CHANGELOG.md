@@ -1,12 +1,14 @@
 # Changelog
 
 Only published releases receive a release date and tag link. This file starts
-with the existing Rust prototype; it does not invent a historical `0.1.0` release.
+with the existing Rust prototype; no historical release is asserted.
 Version selection and owner approval follow [VERSIONING.md](VERSIONING.md).
 
 ## Unreleased
 
-**Candidate: `0.2.0`. Owner approval pending; no release published.**
+**Candidate: `0.1.0-alpha.1`. Owner approval pending; no release published.**
+All initial alpha/beta/RC versions use the `0.1.0` base. The first ordinary
+published release is reserved as `0.2.0` (short form `0.2`).
 
 ### Added
 
@@ -22,6 +24,10 @@ Version selection and owner approval follow [VERSIONING.md](VERSIONING.md).
 
 ### Changed
 
+- Replace the never-released internal `0.2.0` designation with
+  `0.1.0-alpha.1` in Cargo and runtime version reporting, following the owner's
+  preview-numbering decision. Alpha/beta/RC iterations remain in the `0.1.0`
+  family until the first ordinary `0.2.0` release.
 - Rust is required for the core, logic, integration and GUI. The earlier local
   Python experiment is superseded and is not a published release.
 
@@ -33,8 +39,8 @@ Version selection and owner approval follow [VERSIONING.md](VERSIONING.md).
   references and native screen-reader acceptance remain pending.
 - Windows probe descendant cleanup is limited; see the
   [validation report](docs/validation-rust.md) for check scope and limitations.
-- A historical [Linux CI run](https://github.com/PerchAnton/breakfree-office/actions/runs/38876088705)
-  failed the `hung_probe_is_bounded` assertion. Later runs passed; the cause of
-  this intermittent result still needs investigation before release acceptance.
+- Intermittent Linux fixture-process start and timeout checks failed in prior
+  CI, including [run 38878267706](https://github.com/PerchAnton/breakfree-office/actions/runs/38878267706).
+  Other runs passed; the cause remains undiagnosed and is a release-acceptance gate.
 
 [Back to BreakFree Office](README.md)

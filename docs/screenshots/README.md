@@ -4,6 +4,10 @@ Captured 2026-10-16 from the running Rust 0.2.0 native application on macOS
 27.0.1 arm64 using Glow's own-window screenshot event after eight UI frames.
 These are real framebuffer captures, not mockups or images of other apps.
 
+The `0.2.0` number above identifies that historical capture session, not a
+published release or the current candidate. Subsequent owner instructions reserve
+initial previews for the `0.1.0` family; see [versioning](../../VERSIONING.md).
+
 | Image | App session zoom | Native backing ratio | Framebuffer size |
 | --- | --- | --- | --- |
 | [Home 100%](macos-home-zoom100.png) | 1.0 | 2.0 | 2240×1520 px |

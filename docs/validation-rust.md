@@ -5,6 +5,12 @@ Date: 2026-10-16. Review branch: `codex/rust-office-shell`. Office version:
 Python experiment's readiness evidence for the active Rust implementation;
 history of the old experiment remains preserved on its separate branch.
 
+This is historical evidence from the initial Rust implementation, whose internal
+version was `0.2.0`; it was not released. The owner subsequently reserved all
+initial alpha/beta/RC builds for the `0.1.0` family and the first ordinary release
+for `0.2.0`. See the [current version policy](../VERSIONING.md) and
+[project log](PROJECT_LOG.md) for the current candidate and fresh check results.
+
 ## Host and reproducibility
 
 - macOS 27.0.1 (26A434), arm64; no Windows desktop or Linux GUI host available.

@@ -5,9 +5,10 @@ This policy governs future releases; it does not publish or approve one.
 
 ## Current candidate and source of truth
 
-The current application version is **`0.2.0`**, an **unreleased development
-candidate awaiting owner approval**. No earlier release is asserted by this
-number. [CHANGELOG.md](CHANGELOG.md) records the candidate's scope.
+The current application version is **`0.1.0-alpha.1`**, an **unreleased alpha
+candidate awaiting owner approval**. The earlier internal `0.2.0` designation
+was never released and is superseded by the owner's preview-numbering decision.
+[CHANGELOG.md](CHANGELOG.md) records the candidate's scope.
 
 [`[package].version` in Cargo.toml](Cargo.toml) is the only application-version
 source. Cargo.lock records the same package version. CLI `--version` and About
@@ -18,12 +19,34 @@ Use the Git commit SHA to distinguish work within one unreleased candidate.
 
 ## Choosing the next version
 
+The owner has reserved the `0.1.0` base for **all alpha, beta and release-candidate
+iterations before the first ordinary release**. Use these exact SemVer forms:
+
+| Stage | Version series | Advancement |
+| --- | --- | --- |
+| Alpha | `0.1.0-alpha.1`, `0.1.0-alpha.2`, … | Increase N for a new alpha candidate |
+| Beta | `0.1.0-beta.1`, `0.1.0-beta.2`, … | Start beta at 1, then increase N |
+| Release candidate | `0.1.0-rc.1`, `0.1.0-rc.2`, … | Start RC at 1, then increase N |
+| First ordinary published release | **`0.2.0`** | Only after owner approval and completed publication gates |
+
+Here N is a positive integer without leading zeroes. The owner's short form
+`0.2` is written `0.2.0` in Cargo, tags and release notes. `0.1.0x` describes the
+preview family; it is not a literal Cargo version. Do not publish a bare `0.1.0`
+release or move previews to a `0.2.0` base before the first ordinary release.
+Source pushes, PRs and preview publications do not constitute that ordinary
+release. Version changes and stage transitions still require owner approval;
+do not create or publish all the listed example versions automatically.
+
+After the first ordinary `0.2.0` release, apply the increment rules below. This
+startup sequence does not imply production stability or Microsoft compatibility.
+
 | Change | Version rule |
 | --- | --- |
 | Documentation, journal, review or work inside the existing unreleased scope | Keep the candidate version; record meaningful scope changes in the changelog |
-| Initial development (`0.y.z`) | Increment MINOR for a new feature set or incompatible change, resetting PATCH; increment PATCH for compatible fixes to that minor line. Compatibility is provisional and breaking changes must be explicit |
+| Before the first ordinary release | Keep the `0.1.0` base; advance alpha/beta/RC suffixes using the owner-mandated sequence above |
+| Published initial-development series (`0.2.0` onward, before `1.0.0`) | Increment MINOR for a new feature set or incompatible change, resetting PATCH; increment PATCH for compatible fixes to that minor line. Compatibility is provisional and breaking changes must be explicit |
 | Stable releases (`1.0.0` onward) | Increment MAJOR for incompatible public behavior/contracts, MINOR for compatible features/deprecations, PATCH for compatible fixes; reset lower fields when a higher field increases |
-| Preview distribution | Propose `-alpha.N`, `-beta.N` or `-rc.N` before the final version; each published preview gets a unique version |
+| Preview distribution | Every published preview gets a unique version; before the first ordinary release, use only the `0.1.0-alpha.N` / `0.1.0-beta.N` / `0.1.0-rc.N` series |
 
 The public compatibility surface includes documented CLI behavior, editor
 integration, persisted settings/recent-file data and any supported migration
