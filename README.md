@@ -28,6 +28,10 @@
 > [!IMPORTANT]
 > **Rust launcher prototype under review.** Rust is mandatory for the core, application logic, integration and GUI. Office is a lightweight native launcher as well as the specification/brand hub; the independent editors and installers are not supplied here. No verified Microsoft Office compatibility or Windows visual acceptance is claimed.
 
+**Current application version: `0.2.0` — unreleased; owner approval pending.**
+The version comes from Cargo.toml and is shown by `--version` and About.
+See [versioning and approval](VERSIONING.md) and the [changelog](CHANGELOG.md).
+
 ## Office tools. On your terms.
 
 BreakFree Office is the home of a planned family of three focused applications: one for writing, one for working with numbers and one for sharing ideas. Our aim is to make everyday office work feel clear, approachable and under your control.
@@ -69,6 +73,7 @@ Install Rust through the official toolchain manager; `rust-toolchain.toml` pins
 
 ```sh
 cargo run --locked --bin breakfree-office
+cargo run --locked --bin breakfree-office -- --version
 cargo test --locked --features test-fixtures
 cargo fmt --check
 cargo clippy --locked --all-targets --features test-fixtures -- -D warnings
@@ -119,6 +124,8 @@ Start with the [contribution guide](CONTRIBUTING.md). Do not upload confidential
 | Document | Purpose |
 | :--- | :--- |
 | [ROADMAP.md](ROADMAP.md) | Development sequence and milestone acceptance criteria |
+| [VERSIONING.md](VERSIONING.md) | Version increments, owner approval and future release procedure |
+| [CHANGELOG.md](CHANGELOG.md) | Unreleased scope and verified release history |
 | [BRAND.md](BRAND.md) | Name, slogan, visual identity and logo guidance |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to propose and contribute changes |
 | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | A respectful and inclusive community |

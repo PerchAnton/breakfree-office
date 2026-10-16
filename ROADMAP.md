@@ -72,12 +72,22 @@ Extract genuinely reusable components only after more than one application needs
 
 ## 5 · Prepare verified releases
 
+- [x] Establish [SemVer and owner approval rules](VERSIONING.md), a single Cargo
+  version source and an [unreleased changelog](CHANGELOG.md).
+- [ ] Obtain explicit owner approval of the current `0.2.0` candidate and its
+  reviewed source revision; report the current version after every task.
 - [ ] Test installation, upgrade, uninstallation and file associations on declared targets.
 - [ ] Publish real build artifacts, checksums, release notes and known issues.
 - [ ] Document how files, preferences and recovery data are stored.
 - [ ] Establish a private vulnerability-reporting route before public binaries.
 - [ ] Review third-party licenses and redistribution notices.
 - [ ] Add supported platforms only after their builds and workflows have been tested.
+
+**Release exit criteria:** the owner approves the exact version and reviewed
+scope; required checks and known limitations are recorded for the release SHA;
+publication is explicitly authorized; the immutable `v<version>` tag, Cargo
+version, release notes, artifact names and checksums agree. Version approval by
+itself does not complete the other gates. No release is currently published.
 
 ## Not promised for the first release
 

@@ -23,6 +23,27 @@ Read README.md, ROADMAP.md, BRAND.md and CONTRIBUTING.md. The suite is at the pl
 
 Use the pinned rust-toolchain.toml and Cargo.lock. Run cargo fmt --check, cargo test --locked --features test-fixtures, and cargo clippy --locked --all-targets --features test-fixtures -- -D warnings. Check Markdown links, image paths and YAML. Report executed checks separately from unexecuted Windows scaling, screen-reader and Office-reference checks. Do not replace missing evidence with fake CI success badges.
 
+## Versioning and owner approval
+
+- Follow [VERSIONING.md](VERSIONING.md). The application version has one source:
+  `[package].version` in Cargo.toml; keep Cargo.lock consistent. CLI `--version`
+  and About must continue to derive it from `CARGO_PKG_VERSION`.
+- Maintain [CHANGELOG.md](CHANGELOG.md) for the current unreleased candidate.
+  Do not bump the version for every task or documentation/journal update.
+  Propose a justified SemVer change when the release scope requires one.
+- End every completed-work report to the owner with the current exact version,
+  whether it changed and why, and its approval/publication status. Present the
+  version for the owner's explicit approval, including when it is unchanged.
+- Never infer version approval from silence, tests, CI, a previous version's
+  approval or permission to implement. Record an explicit approval with its
+  version, reviewed source SHA, scope, date and source; otherwise say pending.
+  Reconfirm approval when that reviewed scope changes.
+- Version approval, code review/merge and permission to publish a release are
+  separate decisions. Do not create release tags, publish binaries or a GitHub
+  release automatically. Keep released tags and contents immutable.
+- Office, each independent editor, integration protocols and visual specifications
+  have separate version histories; an Office bump does not bump the other repos.
+
 ## Owner-mandated implementation and visual direction
 
 - Rust is mandatory for the core, logic, integration and GUI, not a language proposal.

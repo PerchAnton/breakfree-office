@@ -24,6 +24,9 @@
   mirror with separate SYNC.md metadata, then read both back and compare bytes.
   Preserve others' history, use dedicated journal commits and never force push.
 - Prepare reviewable commits and PRs; no automatic main merge or release.
+- Follow [VERSIONING.md](VERSIONING.md), maintain [CHANGELOG.md](CHANGELOG.md)
+  and derive the application version from Cargo.toml. End every completed-work
+  report with the exact current version for owner approval and its release status.
 
 ```sh
 cargo fmt --check
