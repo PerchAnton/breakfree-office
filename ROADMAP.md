@@ -1,16 +1,37 @@
 # BreakFree Office — Roadmap
 
-**Status: planning.** This roadmap describes proposed work, not delivered features. There are no committed release dates. A milestone is complete only when its acceptance criteria have been demonstrated and reviewed.
+**Status: Rust shell prototype under review; editor milestones pending.** Rust is owner-mandated for the core, application logic, integration and GUI. The items below distinguish implemented prototype work from unverified acceptance. There are no committed release dates. A milestone is complete only when its acceptance criteria have been demonstrated and reviewed.
 
 ## 0 · Agree on the foundation
 
 - [ ] Select the software license and contribution policy with the project owner.
 - [ ] Choose the first supported operating system and document why.
-- [ ] Evaluate the implementation language, UI toolkit and document model with small prototypes.
+- [x] Record the owner-mandated Rust language decision; no language selection remains open.
+- [x] Select native egui/eframe for the Rust-authored shell prototype; keep screen-reader and visual acceptance open.
+- [ ] Review the document model independently in each editor.
 - [ ] Define accessibility, keyboard navigation and file-safety requirements.
 - [ ] Record the native-file and Microsoft Office interoperability strategies separately.
 
-**Exit criteria:** a reviewed architecture decision, an explicit license choice and a buildable minimal shell on the first target platform. The repositories do not contain that shell yet.
+**Exit criteria:** a reviewed architecture decision, an explicit license choice and a buildable minimal shell on the first target platform. A source-run Rust shell is now under review; packaging, license selection and platform acceptance are not complete.
+
+## Office integration and visual delivery
+
+| Stage | Dependencies | Acceptance criterion | Status |
+| --- | --- | --- | --- |
+| Contract v1 | Independent editor boundaries | Schema, strict JSON/identity/semantic checks, examples and rejection tests | Existing v1 preserved and ported to Rust; see validation evidence |
+| Rust shell | Mandatory Rust; pinned Cargo/toolchain | Real create/open/configuration; no-editor state; bounded background probes; direct arguments; real recents | Implemented for review; no production release |
+| Certified visual baseline (V1) | Real Office 2024 on Windows | Start/Backstage screenshots with edition/build, theme, language, scale and window dimensions | Pending; only official Office 2024 theme illustration verified |
+| Common visual system (V2) | V1 direction; own identity | Versioned density, fonts, colors, component states; compact six-page light shell; transparent mark | v1 specified/implemented; exact reference measurements pending |
+| Keyboard/layout (V3) | V2 | Focus/menu/shortcut checks and no clipped required controls at minimum/default/large layouts | Headless logical-DPI checks planned/executed per validation report; native acceptance pending |
+| Windows scale/accessibility (V4) | Certified baseline; real Windows prototype | Screenshots at 100%, 125%, 150%; resize, clipping, focus, menus, native dialogs, Narrator/NVDA and matched-reference comparison | Not executed; Windows environment unavailable |
+| Independent editor adoption (V5) | Reviewed immutable contract/visual revision; real editor builds | Docs first, then Sheets/Slides; standalone save/reopen plus Office dispatch; real-build/version matrix | Pending; fixtures do not establish editor integration |
+| Content/common settings | Validated editor/version matrix | Separate versioned exchange/settings contract, preservation tests and demonstrated reuse | Not started |
+| Suite distribution | Verified OS builds; owner-selected license | Independent apps preserved; packaging/signing/notices/install checks and release approval | Not started; no common installer/auto-release |
+
+Detailed gates: [visual acceptance](docs/visual/v1/acceptance.md). A matching
+headless pixel ratio on macOS is not a Windows scaling screenshot. Shared Rust
+components require demonstrated reuse and pinned versions; no sibling-directory
+or mutable-main dependency is permitted.
 
 ## 1 · Make writing dependable
 

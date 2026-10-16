@@ -1,0 +1,31 @@
+[package]
+name = "breakfree-office"
+version = "0.2.0"
+edition = "2024"
+rust-version = "1.90"
+publish = false
+default-run = "breakfree-office"
+
+[features]
+test-fixtures = []
+validation-capture = []
+
+[dependencies]
+eframe = { version = "=0.32.3", default-features = false, features = ["accesskit", "default_fonts", "glow", "x11", "wayland"] }
+image = { version = "=0.25.8", default-features = false, features = ["webp", "png"] }
+jsonschema = { version = "=0.33.0", default-features = false }
+rfd = "=0.15.4"
+serde = { version = "=1.0.228", features = ["derive"] }
+serde_json = "=1.0.145"
+tempfile = "=3.23.0"
+
+[target.'cfg(unix)'.dependencies]
+libc = "=0.2.177"
+
+[dev-dependencies]
+egui_kittest = { version = "=0.32.3", features = ["eframe"] }
+
+[[bin]]
+name = "breakfree-test-editor"
+path = "tests/support/editor.rs"
+required-features = ["test-fixtures"]

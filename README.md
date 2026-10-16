@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-planning-8055C8?style=flat-square" alt="Status: planning">
+  <img src="https://img.shields.io/badge/status-Rust%20prototype-8055C8?style=flat-square" alt="Status: planning">
   <img src="https://img.shields.io/badge/family-3%20applications-248A83?style=flat-square" alt="Three planned applications">
   <img src="https://img.shields.io/badge/built%20for-everyone-D45B85?style=flat-square" alt="Built for everyone">
 </p>
@@ -26,7 +26,7 @@
 ---
 
 > [!IMPORTANT]
-> **This project is at the planning stage.** These repositories contain project documentation and branding, not working office applications. Features below describe our intended direction. There are no installers or verified Microsoft Office compatibility claims yet.
+> **Rust launcher prototype under review.** Rust is mandatory for the core, application logic, integration and GUI. Office is a lightweight native launcher as well as the specification/brand hub; the independent editors and installers are not supplied here. No verified Microsoft Office compatibility or Windows visual acceptance is claimed.
 
 ## Office tools. On your terms.
 
@@ -42,7 +42,7 @@ We want to start small, build a dependable foundation and earn trust through wor
 | **BreakFree Sheets** | Organize data, calculate and explore numbers | [breakfree-sheets](https://github.com/PerchAnton/breakfree-sheets) | Planning |
 | **BreakFree Slides** | Turn ideas into clear presentations | [breakfree-slides](https://github.com/PerchAnton/breakfree-slides) | Planning |
 
-**This repository is the suite hub:** shared direction, branding, contribution guidance and links to the applications. Each application has its own repository, roadmap and future release history. They are not nested repositories or Git submodules.
+**This repository is the suite hub and lightweight Rust launcher:** shared direction, integration/visual specifications, branding, contribution guidance and application launch. Each application has its own repository, roadmap and future release history. They are not nested repositories or Git submodules.
 
 ## Principles we intend to build on
 
@@ -58,9 +58,49 @@ Our first milestone belongs to **BreakFree Docs**:
 
 > Create a small document → format it → save it → reopen it → continue editing without losing supported content.
 
-Once that workflow is dependable, we can expand document capabilities and apply what we learn to Sheets and Slides. The technology stack, file-format strategy and supported platform matrix still need to be selected and tested. Windows, macOS and Linux are candidate desktop targets, not currently supported builds.
+Once that workflow is dependable, we can expand document capabilities and apply what we learn to Sheets and Slides. The owner has selected Rust for the core, logic, integration and GUI. The native GUI prototype uses egui/eframe; file-format strategy, licensing and the supported platform matrix still require validation. Windows, macOS and Linux are candidate desktop targets, not currently supported builds.
 
 Read the [suite roadmap](ROADMAP.md) for the proposed sequence and the criteria for moving forward.
+
+## Run the Rust shell
+
+Install Rust through the official toolchain manager; `rust-toolchain.toml` pins
+1.90.0 and Cargo.lock pins dependencies. From this repository root:
+
+```sh
+cargo run --locked --bin breakfree-office
+cargo test --locked --features test-fixtures
+cargo fmt --check
+cargo clippy --locked --all-targets --features test-fixtures -- -D warnings
+cargo run --locked --bin breakfree-office -- --check-manifest contracts/v1/examples/docs.json
+cargo run --locked --bin breakfree-office -- --check-installations
+```
+
+For a checkout-local toolchain (as used for local validation), set only this
+shell session before those commands:
+
+```sh
+export RUSTUP_HOME="$PWD/.tools/rustup" CARGO_HOME="$PWD/.tools/cargo" PATH="$PWD/.tools/cargo/bin:$PATH"
+```
+
+The native Rust GUI has Home, New, Open, Recent, Settings and About. Configure
+only executable files you trust in Settings; the initial capability check runs
+that code. Missing editors are labeled as unavailable and their creation actions
+are disabled. Recents start empty and record only actual dispatched opens. No
+fake templates or accounts are shown. The approved logo retains transparency.
+On macOS choose the binary inside an `.app` bundle, on Windows an `.exe` file.
+No Python runtime, JavaScript frontend, Electron or WebView is used.
+
+See [architecture](docs/architecture.md), [Rust decision](docs/adr/0002-rust-native-shell.md),
+[visual system v1](docs/visual/v1/README.md), [reference inventory](docs/visual/v1/reference.md)
+and [validation report](docs/validation-rust.md). The appearance target is Windows
+Office 2024 Start/File/Backstage with BreakFree identity; exact reference captures
+and actual Windows 100/125/150% acceptance checks remain explicit gates.
+
+The editor contract is [integration v1](contracts/v1/integration.md) with its
+[JSON Schema](contracts/v1/app-manifest.schema.json) and fictional examples.
+Editors keep separate builds and work without Office. Consume shared
+specifications at reviewed immutable commits, never sibling folders or mutable main.
 
 ## Compatibility: a goal, not a guarantee
 

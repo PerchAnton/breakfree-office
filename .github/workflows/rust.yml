@@ -1,0 +1,28 @@
+name: Rust prototype checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  native-core:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Linux native GUI development libraries
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libxkbcommon-dev libwayland-dev libx11-dev libxrandr-dev libxi-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev
+      - run: rustup toolchain install 1.90.0 --profile minimal --component rustfmt --component clippy
+      - run: cargo fmt --check
+      - run: cargo test --locked --features test-fixtures
+      - run: cargo clippy --locked --all-targets --all-features -- -D warnings
+      - run: cargo run --locked --bin breakfree-office -- --check-manifest contracts/v1/examples/docs.json
+      - run: cargo run --locked --bin breakfree-office -- --check-manifest contracts/v1/examples/sheets.json
+      - run: cargo run --locked --bin breakfree-office -- --check-manifest contracts/v1/examples/slides.json

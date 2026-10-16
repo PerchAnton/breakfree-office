@@ -51,3 +51,15 @@ Clear, welcoming and confident. Explain what a user can do, distinguish plans fr
 The project owner has not selected a distribution license for software or brand assets. Do not add a license badge, claim trademark registration or grant third-party reuse rights without the owner's decision.
 
 [Back to BreakFree Office](README.md)
+
+## Owner-mandated desktop UI direction
+
+The family targets Windows desktop Office 2024 Start and File/Backstage density,
+layout and typographic hierarchy while retaining all BreakFree names, logos and
+identity. Use the light neutral shell palette in [visual system v1](docs/visual/v1/README.md);
+the earlier proposed brand palette is not a directive to paint large UI surfaces
+violet. Keep rainbow accents in approved transparent marks. Shell colors and
+document-content themes are separate. Load system fonts at runtime or use
+licensed fallbacks; never distribute Microsoft fonts, artwork or templates.
+Exact Office 2024 reference proof and Windows scale acceptance remain required,
+not inferred from the appearance of a toolkit demo.
