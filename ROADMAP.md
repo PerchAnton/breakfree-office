@@ -76,7 +76,9 @@ Extract genuinely reusable components only after more than one application needs
   version source and an [unreleased changelog](CHANGELOG.md).
 - [x] Record the owner's `0.1.0-alpha.N` → `0.1.0-beta.N` → `0.1.0-rc.N`
   preview scheme and reserve `0.2.0` for the first ordinary published release.
-- [ ] Obtain explicit owner approval of the current `0.1.0-alpha.1` candidate and its
+- [x] Require a version increment and changelog entry for every completed change
+  set, including documentation; keep related validation/journal commits together.
+- [ ] Obtain explicit owner approval of the current `0.1.0-alpha.2` candidate and its
   reviewed source revision; report the current version after every task.
 - [ ] Test installation, upgrade, uninstallation and file associations on declared targets.
 - [ ] Publish real build artifacts, checksums, release notes and known issues.

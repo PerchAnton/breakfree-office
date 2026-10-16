@@ -88,10 +88,12 @@ window-dialog interaction, exact OS-build support or Office 2024 visual acceptan
 
 ## Desktop refinement 1.1.0 — 2026-10-16
 
-Current candidate **0.1.0-alpha.1**, still unreleased and awaiting owner approval.
-This iteration refines the existing preview scope; no application-version bump,
-contract change or dependency update is needed. The additive visual specification
-advances to **1.1.0**. Source/PR links and publication checks are in the project log.
+Historical validation session: **0.1.0-alpha.1**, unreleased at capture time.
+The desktop refinement is now tracked in **0.1.0-alpha.2** under the revised
+[per-change version policy](../VERSIONING.md); the original check and image labels
+remain accurate for their source. No contract or dependency update was made.
+The additive visual specification advances to **1.1.0**. Source/PR links and
+publication checks are in the project log.
 
 On the same pinned macOS/Rust host, `cargo fmt --check`,
 `cargo test --locked --features test-fixtures` (**24 passed**: 5 contract, 8 GUI,
@@ -120,3 +122,27 @@ No screenshot was relabeled as 2024 evidence. Native Windows scaling,
 Narrator/NVDA, native-dialog interaction, matched-reference comparison and real
 editor integration remain unexecuted. Earlier intermittent Linux CI process
 failures are not fixed by this presentation change; new CI is tracked separately.
+
+## Per-change versioning — 2026-10-16
+
+Candidate **0.1.0-alpha.2**, unreleased; exact owner approval remains pending.
+The new policy requires an application-version increment and changelog entry for
+every completed change set, including documentation. This candidate records the
+completed desktop refinement and the policy correction.
+
+Fresh checks on the pinned macOS arm64 / Rust 1.90.0 host:
+
+- `cargo fmt --check`: passed.
+- `cargo test --locked --features test-fixtures`: **24 passed** (5 contract,
+  8 GUI, 9 process, 2 settings).
+- `cargo clippy --locked --all-targets --features test-fixtures -- -D warnings`: passed.
+- `cargo run --quiet --locked --bin breakfree-office -- --version`: **0.1.0-alpha.2**.
+- Locked Cargo metadata and Cargo.toml/Cargo.lock agree; only the root package's
+  version changed in the lockfile. CLI/About retain their Cargo-derived version.
+- 82 relative Markdown/image paths, both YAML files, 13 existing capture hashes
+  and `git diff --check`: passed.
+
+No new screenshots were taken for this version-only runtime change; existing
+images retain their actual alpha.1 labels. No new native Windows DPI, screen-reader,
+Office 2024 reference or production-editor checks were executed. Source-specific
+CI results are recorded separately in the [project log](PROJECT_LOG.md).

@@ -1,6 +1,8 @@
 # Desktop refinement 1.1.0 — actual macOS captures
 
-Application: **0.1.0-alpha.1**, unreleased. Visual specification: **1.1.0**.
+Captured application: **0.1.0-alpha.1**, unreleased. Visual specification: **1.1.0**.
+These historical captures retain their actual version; see the
+[current candidate and approval status](../../../VERSIONING.md).
 Captured 2026-10-16 on macOS 27.0.1 arm64, native backing ratio 2.0, light theme,
 English UI, installed system Arial fallback. These are unmodified framebuffer
 images from the running Rust/egui/Glow application, not mockups. The approved

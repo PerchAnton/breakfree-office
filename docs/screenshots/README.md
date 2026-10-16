@@ -38,8 +38,10 @@ application's framebuffer and closes its window after saving. Change the file
 name/metadata if capturing on another OS; never reuse the macOS labels as proof
 of Windows scaling.
 
-## Current desktop refinement
+## Desktop refinement capture session
 
-See [visual-system 1.1.0 captures](desktop-v1-1/README.md) for the current
-`0.1.0-alpha.1` candidate, all six pages, menu/focus states and small-window checks.
+See [visual-system 1.1.0 captures](desktop-v1-1/README.md) recorded with
+`0.1.0-alpha.1`: all six pages, menu/focus states and small-window checks.
+The [current candidate](../../VERSIONING.md) advances independently of these
+historical images; their original version labels are preserved.
 The images above remain historical evidence of the initial prototype.

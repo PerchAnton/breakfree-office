@@ -26,8 +26,10 @@ Do not claim tests passed when they were not run. Do not introduce fake download
 ## Versions and releases
 
 Follow [VERSIONING.md](VERSIONING.md) and update [CHANGELOG.md](CHANGELOG.md)
-when the candidate's scope changes. Propose a version increment with its reason;
-documentation-only work does not require an application bump. Report the exact
+for every completed change set, including documentation and standalone journal
+updates. Increment the application version (currently the alpha suffix by one),
+keep Cargo.toml/Cargo.lock consistent, and record the reason and scope. Validation
+and journal commits completing the same change set share that version. Report the exact
 current version and approval status at the end of every completed task. Only an
 explicit owner decision approves a version; approval to publish a release is
 separate. PRs, successful CI and merges do not publish a release automatically.

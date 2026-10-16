@@ -34,9 +34,13 @@ Use the pinned rust-toolchain.toml and Cargo.lock. Run cargo fmt --check, cargo 
   spelling of `0.2`). Keep this startup preview series fixed; advance its suffix
   for a new preview instead of moving to another base version. Publishing source
   commits or a preview does not start the ordinary-release series.
-- Maintain [CHANGELOG.md](CHANGELOG.md) for the current unreleased candidate.
-  Do not bump the version for every task or documentation/journal update.
-  Propose a justified SemVer change when the release scope requires one.
+- Increment the application version and update [CHANGELOG.md](CHANGELOG.md)
+  for every completed change set, including code, fixes, documentation, rules
+  and standalone journal updates. During the current alpha stage, increase N
+  by one. Keep Cargo.toml, Cargo.lock and current-version summaries consistent.
+- A change set includes its validation, corrections and dedicated journal commits;
+  record those under the same version. A later independent change gets the next
+  version. Read-only work with no repository changes does not require a bump.
 - End every completed-work report to the owner with the current exact version,
   whether it changed and why, and its approval/publication status. Present the
   version for the owner's explicit approval, including when it is unchanged.

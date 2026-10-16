@@ -28,11 +28,12 @@
 > [!IMPORTANT]
 > **Rust launcher prototype under review.** Rust is mandatory for the core, application logic, integration and GUI. Office is a lightweight native launcher as well as the specification/brand hub; the independent editors and installers are not supplied here. No verified Microsoft Office compatibility or Windows visual acceptance is claimed.
 
-**Current application version: `0.1.0-alpha.1` — unreleased; owner approval pending.**
+**Current application version: `0.1.0-alpha.2` — unreleased; owner approval pending.**
 The version comes from Cargo.toml and is shown by `--version` and About.
 All initial alpha, beta and RC versions use the `0.1.0` base; the first ordinary
 published release is planned as `0.2.0` (short form `0.2`).
-See [versioning and approval](VERSIONING.md) and the [changelog](CHANGELOG.md).
+Every completed change set increments the application version and updates the
+[changelog](CHANGELOG.md). See [versioning and approval](VERSIONING.md).
 
 ## Office tools. On your terms.
 
