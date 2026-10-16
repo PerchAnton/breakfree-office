@@ -37,3 +37,9 @@ Allowed capture zoom values are 1.0, 1.25 and 1.5. The feature captures only thi
 application's framebuffer and closes its window after saving. Change the file
 name/metadata if capturing on another OS; never reuse the macOS labels as proof
 of Windows scaling.
+
+## Current desktop refinement
+
+See [visual-system 1.1.0 captures](desktop-v1-1/README.md) for the current
+`0.1.0-alpha.1` candidate, all six pages, menu/focus states and small-window checks.
+The images above remain historical evidence of the initial prototype.

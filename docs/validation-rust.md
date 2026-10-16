@@ -85,3 +85,38 @@ Subsequent commits only update documentation/journals and have separate CI runs.
 These runner results are native build/process and headless UI evidence for the
 specified code SHA, not real Windows desktop captures, Narrator/NVDA, native
 window-dialog interaction, exact OS-build support or Office 2024 visual acceptance.
+
+## Desktop refinement 1.1.0 — 2026-10-16
+
+Current candidate **0.1.0-alpha.1**, still unreleased and awaiting owner approval.
+This iteration refines the existing preview scope; no application-version bump,
+contract change or dependency update is needed. The additive visual specification
+advances to **1.1.0**. Source/PR links and publication checks are in the project log.
+
+On the same pinned macOS/Rust host, `cargo fmt --check`,
+`cargo test --locked --features test-fixtures` (**24 passed**: 5 contract, 8 GUI,
+9 process, 2 settings), and warning-free Clippy passed. Clippy was run for both
+`--features test-fixtures` and `--features test-fixtures,validation-capture`,
+with `--locked --all-targets -- -D warnings`. The capture build ran successfully;
+CLI reports `0.1.0-alpha.1`. No production editor was used.
+
+New/strengthened GUI checks verify keyboard activation and Escape dismissal,
+physical bounds of navigation at minimum window/100–150% session zoom, explicit
+card reflow after resize, scrolling an offscreen setup action into view, and
+case-insensitive recent-file filtering/clear with persisted history unchanged.
+Temporary seeded records exist only in tests. The original logical-DPI matrix,
+disabled editor controls, light theme and transparent-logo checks remain.
+
+[Thirteen actual macOS captures](screenshots/desktop-v1-1/README.md) cover all six
+pages at 100%, Home at 125/150%, Home/Open/Settings at minimum size and 150%, plus
+File-menu/focus states. The UI now exposes a solid scrollbar for overflowing
+content. Text/controls inside the viewport, selection/focus, row/card boundaries,
+transparent branding and reflow were visually inspected. Vertical content below
+the viewport requires scrolling; no claim that all content fits at high zoom.
+
+The Office 2024 reference inventory remains uncertified for Start/Backstage;
+Microsoft's mixed-version help illustration explicitly describes Office 365.
+No screenshot was relabeled as 2024 evidence. Native Windows scaling,
+Narrator/NVDA, native-dialog interaction, matched-reference comparison and real
+editor integration remain unexecuted. Earlier intermittent Linux CI process
+failures are not fixed by this presentation change; new CI is tracked separately.

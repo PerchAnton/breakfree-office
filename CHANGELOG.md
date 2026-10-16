@@ -24,6 +24,15 @@ published release is reserved as `0.2.0` (short form `0.2`).
 
 ### Changed
 
+- Refine the desktop shell with visual specification 1.1.0: compact icon navigation,
+  bottom-aligned Settings/About, white workspace, blank-file previews with explicit
+  column reflow, aligned recent rows and a two-pane Open view.
+- Add filtering of actual recent filenames/paths without changing their stored
+  history. Keep full paths in tooltips/accessibility labels and explicit empty states.
+- Restore Escape dismissal of the File menu, show platform-correct shortcut hints,
+  and keep navigation reachable at minimum size with 150% session zoom. Add native
+  macOS framebuffer evidence; Windows visual acceptance remains pending.
+
 - Replace the never-released internal `0.2.0` designation with
   `0.1.0-alpha.1` in Cargo and runtime version reporting, following the owner's
   preview-numbering decision. Alpha/beta/RC iterations remain in the `0.1.0`

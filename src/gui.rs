@@ -1,5 +1,5 @@
 use crate::{
-    contract::APP_NAMES,
+    contract::{APP_IDS, APP_NAMES},
     registry::{AppState, Recent, Registry},
     visual,
 };
@@ -65,6 +65,7 @@ pub struct OfficeApp {
     registry: Option<Arc<Mutex<Registry>>>,
     apps: [AppState; 3],
     recent: Vec<Recent>,
+    recent_query: String,
     receiver: Option<mpsc::Receiver<Update>>,
     notice: String,
     error: bool,
@@ -120,10 +121,27 @@ impl OfficeApp {
                 )
             });
         Self {
-            page: Page::Home,
+            page: {
+                #[cfg(feature = "validation-capture")]
+                {
+                    std::env::var("BREAKFREE_CAPTURE_PAGE")
+                        .ok()
+                        .and_then(|name| {
+                            Page::ALL
+                                .into_iter()
+                                .find(|p| p.label().eq_ignore_ascii_case(&name))
+                        })
+                        .unwrap_or(Page::Home)
+                }
+                #[cfg(not(feature = "validation-capture"))]
+                {
+                    Page::Home
+                }
+            },
             registry,
             apps,
             recent,
+            recent_query: String::new(),
             receiver: None,
             notice,
             error,
@@ -221,28 +239,28 @@ impl OfficeApp {
 
     fn menu(&mut self, ctx: &egui::Context) {
         egui::TopBottomPanel::top("menu")
-            .exact_height(30.0)
+            .exact_height(32.0)
             .frame(
                 egui::Frame::new()
                     .fill(visual::NAV)
-                    .inner_margin(egui::Margin::symmetric(12, 0)),
+                    .inner_margin(egui::Margin::symmetric(12, 1)),
             )
             .show(ctx, |ui| {
                 ui.visuals_mut().button_frame = false;
                 ui.horizontal(|ui| {
-                    ui.menu_button("File", |ui| {
+                    let _file_menu = ui.menu_button("File", |ui| {
                         if ui.button("Home").clicked() {
                             self.page = Page::Home;
                             ui.close();
                         }
-                        if ui.button("New\tCtrl+N").clicked() {
+                        if ui.button(format!("New\t{}", command_hint("N"))).clicked() {
                             self.page = Page::New;
                             ui.close();
                         }
                         if ui
                             .add_enabled(
                                 !self.busy() && self.registry.is_some(),
-                                egui::Button::new("Open…\tCtrl+O"),
+                                egui::Button::new(format!("Open…\t{}", command_hint("O"))),
                             )
                             .clicked()
                         {
@@ -262,11 +280,27 @@ impl OfficeApp {
                             ctx.send_viewport_cmd(egui::ViewportCommand::Close);
                         }
                     });
+                    #[cfg(feature = "validation-capture")]
+                    if self.capture_frames == 2
+                        && std::env::var("BREAKFREE_CAPTURE_STATE").as_deref() == Ok("menu")
+                    {
+                        egui::Popup::open_id(
+                            ctx,
+                            egui::Popup::default_response_id(&_file_menu.response),
+                        );
+                    }
                     ui.menu_button("Help", |ui| {
                         if ui.button("About BreakFree Office").clicked() {
                             self.page = Page::About;
                             ui.close();
                         }
+                    });
+                    ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
+                        ui.label(
+                            RichText::new("BreakFree Office")
+                                .size(12.0)
+                                .color(visual::MUTED),
+                        );
                     });
                 });
             });
@@ -277,7 +311,7 @@ impl OfficeApp {
         if let Ok(path) = std::env::var("BREAKFREE_CAPTURE_TO") {
             self.capture_frames += 1;
             ctx.request_repaint();
-            if self.capture_frames == 8 {
+            if self.capture_frames == 24 {
                 ctx.send_viewport_cmd(egui::ViewportCommand::Screenshot(Default::default()));
             }
             let image = ctx.input(|i| {
@@ -320,7 +354,9 @@ impl OfficeApp {
         {
             self.open_picker(ctx);
         }
-        if ctx.input_mut(|input| input.consume_key(egui::Modifiers::NONE, egui::Key::Escape)) {
+        if self.choice.is_some()
+            && ctx.input_mut(|input| input.consume_key(egui::Modifiers::NONE, egui::Key::Escape))
+        {
             self.choice = None;
         }
         for (i, key) in [
@@ -362,78 +398,61 @@ impl OfficeApp {
                     });
                 });
             });
-        egui::SidePanel::left("navigation")
-            .exact_width(visual::NAV_WIDTH)
-            .resizable(false)
-            .frame(
-                egui::Frame::new()
-                    .fill(visual::NAV)
-                    .inner_margin(egui::Margin::symmetric(14, 20)),
-            )
+        self.navigation(ctx);
+        egui::CentralPanel::default()
+            .frame(egui::Frame::new().fill(visual::BG).inner_margin(visual::CONTENT_MARGIN))
             .show(ctx, |ui| {
-                ui.horizontal(|ui| {
-                    if let Some(logo) = &self.logo {
-                        ui.image((logo.id(), Vec2::splat(30.0)));
+                egui::ScrollArea::vertical().id_salt("page-content").auto_shrink([false, false]).show(ui, |ui| {
+                    ui.heading(self.page.label());
+                    ui.add_space(24.0);
+                    if self.error {
+                        egui::Frame::new().fill(Color32::from_rgb(255, 244, 231)).inner_margin(12).show(ui, |ui| {
+                            ui.label(&self.notice);
+                            if ui.button("Dismiss message").clicked() { self.error = false; }
+                        });
+                        ui.add_space(16.0);
                     }
-                    ui.label(RichText::new("BreakFree\nOffice").size(15.0).strong());
+                    match self.page {
+                        Page::Home => {
+                            self.app_cards(ui, ctx);
+                            ui.add_space(30.0);
+                            self.recent_files(ui, ctx, true);
+                        }
+                        Page::New => {
+                            self.app_cards(ui, ctx);
+                            ui.add_space(30.0);
+                            section(ui, "Templates");
+                            ui.add_space(8.0);
+                            ui.label(RichText::new("No templates are installed.").color(visual::MUTED));
+                        }
+                        Page::Open => self.open_page(ui, ctx),
+                        Page::Recent => self.recent_files(ui, ctx, false),
+                        Page::Settings => self.settings(ui, ctx),
+                        Page::About => {
+                            ui.horizontal(|ui| {
+                                if let Some(logo) = &self.logo { ui.image((logo.id(), Vec2::splat(48.0))); }
+                                ui.vertical(|ui| {
+                                    ui.label(RichText::new("BreakFree Office").size(20.0).strong());
+                                    ui.label("Your work. Your freedom.");
+                                });
+                            });
+                            ui.add_space(24.0);
+                            ui.label(format!("Version {} · Rust desktop prototype", env!("CARGO_PKG_VERSION")));
+                            ui.label(format!("Visual system {} · integration protocol 1", visual::VERSION));
+                            ui.label(format!("Interface font: {}", self.font_name));
+                            ui.add_space(18.0);
+                            ui.label("Independent editors for documents, spreadsheets and presentations.");
+                            ui.label("Office launches editors; it does not edit your documents. No accounts or online services are required.");
+                            ui.add_space(18.0);
+                            ui.label(RichText::new("Microsoft Office file compatibility and Windows visual acceptance have not been verified. No project software license has been selected.").color(visual::MUTED));
+                        }
+                    }
+                    if !self.error && self.notice != "Ready" {
+                        ui.add_space(20.0);
+                        ui.label(RichText::new(&self.notice).small().color(visual::MUTED));
+                    }
                 });
-                ui.add_space(26.0);
-                for page in Page::ALL {
-                    let selected = self.page == page;
-                    let response = ui.add_sized(
-                        [ui.available_width(), visual::ROW_HEIGHT],
-                        egui::Button::new(page.label())
-                            .selected(selected)
-                            .frame(selected),
-                    );
-                    focus(ui, &response);
-                    if response.clicked() {
-                        self.page = page;
-                    }
-                    response.on_hover_text(format!(
-                        "{} · Alt+{}",
-                        page.label(),
-                        Page::ALL.iter().position(|p| *p == page).unwrap_or(0) + 1
-                    ));
-                    ui.add_space(3.0);
-                }
             });
-        egui::CentralPanel::default().frame(egui::Frame::new().fill(visual::BG).inner_margin(visual::CONTENT_MARGIN)).show(ctx, |ui| {
-            egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
-                ui.heading(self.page.label());
-                ui.add_space(22.0);
-                if self.error {
-                    egui::Frame::new().fill(Color32::from_rgb(255, 244, 231)).inner_margin(12).show(ui, |ui| {
-                        ui.label(&self.notice);
-                        if ui.button("Dismiss message").clicked() { self.error = false; }
-                    });
-                    ui.add_space(16.0);
-                }
-                match self.page {
-                    Page::Home => { self.app_cards(ui, ctx); ui.add_space(26.0); ui.label(RichText::new("Recent").size(18.0)); ui.add_space(12.0); self.recent_files(ui, ctx, true); },
-                    Page::New => { self.app_cards(ui, ctx); ui.add_space(28.0); ui.label(RichText::new("Templates").size(18.0)); ui.label("No templates are installed."); },
-                    Page::Open => {
-                        ui.label("Open a file from this computer."); ui.add_space(14.0);
-                        if button(ui, "Browse this computer…", !self.busy() && self.registry.is_some()).clicked() { self.open_picker(ctx); }
-                        ui.add_space(28.0); self.recent_files(ui, ctx, false);
-                    },
-                    Page::Recent => self.recent_files(ui, ctx, false),
-                    Page::Settings => self.settings(ui, ctx),
-                    Page::About => {
-                        ui.label(RichText::new("BreakFree Office").size(20.0).strong());
-                        ui.label("Your work. Your freedom."); ui.add_space(14.0);
-                        ui.label(format!("Version {} · Rust desktop prototype", env!("CARGO_PKG_VERSION")));
-                        ui.label(format!("Visual system {} · integration protocol 1", visual::VERSION));
-                        ui.label(format!("Interface font: {}", self.font_name));
-                        ui.label("Independent editors for documents, spreadsheets and presentations.");
-                        ui.add_space(18.0);
-                        ui.label("Office launches editors; it does not edit your documents. No accounts or online services are required.");
-                        ui.label("Microsoft Office file compatibility and Windows visual acceptance have not been verified. No project software license has been selected.");
-                    },
-                }
-                if !self.error && self.notice != "Ready" { ui.add_space(20.0); ui.label(RichText::new(&self.notice).size(12.0).color(visual::MUTED)); }
-            });
-        });
         if let Some((path, ids)) = self.choice.clone() {
             egui::Window::new("Choose an editor")
                 .collapsible(false)
@@ -456,113 +475,419 @@ impl OfficeApp {
         }
     }
 
+    fn navigation(&mut self, ctx: &egui::Context) {
+        egui::SidePanel::left("navigation")
+            .exact_width(visual::NAV_WIDTH)
+            .resizable(false)
+            .frame(
+                egui::Frame::new()
+                    .fill(visual::NAV)
+                    .inner_margin(egui::Margin::symmetric(8, 12)),
+            )
+            .show(ctx, |ui| {
+                ui.spacing_mut().item_spacing.y = 4.0;
+                let compact = ui.available_height() < 410.0;
+                ui.horizontal(|ui| {
+                    ui.add_space(8.0);
+                    if let Some(logo) = &self.logo {
+                        ui.image((logo.id(), Vec2::splat(28.0)));
+                    }
+                    ui.label(RichText::new("BreakFree Office").size(14.0));
+                });
+                ui.add_space(if compact { 4.0 } else { 30.0 });
+                for page in [Page::Home, Page::New, Page::Open, Page::Recent] {
+                    self.navigation_item(ui, page);
+                }
+                // Reserve the footer while retaining top-to-bottom keyboard order.
+                ui.add_space(
+                    (ui.available_height() - 2.0 * (visual::ROW_HEIGHT + 4.0) - 12.0).max(0.0),
+                );
+                ui.separator();
+                for page in [Page::Settings, Page::About] {
+                    self.navigation_item(ui, page);
+                }
+            });
+    }
+
+    fn navigation_item(&mut self, ui: &mut egui::Ui, page: Page) {
+        let selected = self.page == page;
+        let (rect, response) = ui.allocate_exact_size(
+            egui::vec2(ui.available_width(), visual::ROW_HEIGHT),
+            Sense::click(),
+        );
+        #[cfg(feature = "validation-capture")]
+        if page == Page::New
+            && self.capture_frames == 2
+            && std::env::var("BREAKFREE_CAPTURE_STATE").as_deref() == Ok("focus")
+        {
+            response.request_focus();
+        }
+        response.widget_info(|| {
+            egui::WidgetInfo::selected(
+                egui::WidgetType::SelectableLabel,
+                ui.is_enabled(),
+                selected,
+                page.label(),
+            )
+        });
+        if selected || response.hovered() || response.is_pointer_button_down_on() {
+            ui.painter().rect_filled(
+                rect,
+                2,
+                if selected {
+                    visual::SELECTED
+                } else {
+                    visual::HOVER
+                },
+            );
+        }
+        if selected {
+            let marker = egui::Rect::from_min_size(
+                rect.left_top() + egui::vec2(0.0, 10.0),
+                egui::vec2(3.0, 20.0),
+            );
+            ui.painter().rect_filled(marker, 1, visual::ACCENT);
+        }
+        let icon = match page {
+            Page::Home => Glyph::Home,
+            Page::New => Glyph::New,
+            Page::Open => Glyph::Folder,
+            Page::Recent => Glyph::Clock,
+            Page::Settings => Glyph::Settings,
+            Page::About => Glyph::Info,
+        };
+        draw_glyph(
+            ui.painter(),
+            rect.left_center() + egui::vec2(24.0, 0.0),
+            icon,
+            visual::INK,
+        );
+        ui.painter().text(
+            rect.left_center() + egui::vec2(48.0, 0.0),
+            egui::Align2::LEFT_CENTER,
+            page.label(),
+            egui::FontId::proportional(14.0),
+            visual::INK,
+        );
+        focus(ui, &response);
+        if response.clicked() {
+            self.page = page;
+        }
+        response.on_hover_text(format!(
+            "{} · Alt+{}",
+            page.label(),
+            Page::ALL.iter().position(|p| *p == page).unwrap_or(0) + 1
+        ));
+    }
+
+    fn open_page(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        // A narrow viewport stacks the location pane above the files, rather than clipping it.
+        if ui.available_width() < 620.0 {
+            self.local_location(ui, ctx);
+            ui.add_space(24.0);
+            self.recent_files(ui, ctx, false);
+        } else {
+            ui.horizontal_top(|ui| {
+                ui.allocate_ui_with_layout(
+                    egui::vec2(198.0, 220.0),
+                    Layout::top_down(Align::Min),
+                    |ui| self.local_location(ui, ctx),
+                );
+                ui.separator();
+                ui.add_space(16.0);
+                ui.vertical(|ui| self.recent_files(ui, ctx, false));
+            });
+        }
+    }
+
+    fn local_location(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        section(ui, "This computer");
+        ui.add_space(12.0);
+        ui.label(
+            RichText::new("Open a local document, spreadsheet or presentation.")
+                .color(visual::MUTED),
+        );
+        ui.add_space(12.0);
+        if button(
+            ui,
+            "Browse this computer…",
+            !self.busy() && self.registry.is_some(),
+        )
+        .clicked()
+        {
+            self.open_picker(ctx);
+        }
+    }
+
     fn app_cards(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
-        ui.label(RichText::new("Create new").size(18.0));
+        section(ui, "Create new");
         ui.add_space(12.0);
         let enabled = !self.busy() && self.registry.is_some();
-        let width = ((ui.available_width() - 24.0) / 3.0).max(160.0);
-        ui.horizontal_wrapped(|ui| {
-            for i in 0..3 {
-                let ready = self.apps[i].manifest.is_some();
-                let can_new = self.apps[i]
-                    .manifest
-                    .as_ref()
-                    .is_some_and(|m| m.supports("new"));
-                egui::Frame::new()
-                    .fill(Color32::WHITE)
-                    .stroke(egui::Stroke::new(1.0, visual::LINE))
-                    .corner_radius(3)
-                    .inner_margin(16)
-                    .show(ui, |ui| {
-                        ui.with_layout(Layout::top_down(Align::Min), |ui| {
-                            ui.set_width(width - 32.0);
-                            ui.set_min_height(122.0);
-                            ui.label(RichText::new(APP_NAMES[i]).size(15.0).strong());
-                            ui.add_space(8.0);
-                            ui.label(
-                                RichText::new(if ready {
-                                    "Ready"
+        ui.spacing_mut().item_spacing.x = 16.0;
+        let columns = ((ui.available_width() + 16.0) / (visual::CARD_WIDTH + 16.0))
+            .floor()
+            .clamp(1.0, 3.0) as usize;
+        for row in [0, 1, 2].chunks(columns) {
+            ui.horizontal_top(|ui| {
+                for &i in row {
+                    let ready = self.apps[i].manifest.is_some();
+                    let can_new = self.apps[i]
+                        .manifest
+                        .as_ref()
+                        .is_some_and(|m| m.supports("new"));
+                    let label = ["Blank document", "Blank spreadsheet", "Blank presentation"][i];
+                    ui.push_id(("new-file", i), |ui| {
+                        ui.allocate_ui_with_layout(
+                            egui::vec2(visual::CARD_WIDTH, visual::CARD_HEIGHT + 28.0),
+                            Layout::top_down(Align::Center),
+                            |ui| {
+                                // Preserve readable contrast while exposing the real disabled state.
+                                let painter = ui.painter().clone();
+                                let response = ui
+                                    .add_enabled_ui(enabled && can_new, |ui| {
+                                        let (rect, response) = ui.allocate_exact_size(
+                                            egui::vec2(visual::CARD_WIDTH, visual::CARD_HEIGHT),
+                                            Sense::click(),
+                                        );
+                                        response.widget_info(|| {
+                                            egui::WidgetInfo::labeled(
+                                                egui::WidgetType::Button,
+                                                ui.is_enabled(),
+                                                label,
+                                            )
+                                        });
+                                        painter.rect(
+                                            rect,
+                                            2,
+                                            if response.hovered() {
+                                                visual::HOVER
+                                            } else {
+                                                visual::NAV
+                                            },
+                                            egui::Stroke::new(
+                                                1.0,
+                                                if response.hovered() {
+                                                    visual::ACCENT
+                                                } else {
+                                                    visual::LINE
+                                                },
+                                            ),
+                                            egui::StrokeKind::Inside,
+                                        );
+                                        document_preview(&painter, rect, i);
+                                        painter.text(
+                                            rect.left_bottom() + egui::vec2(12.0, -32.0),
+                                            egui::Align2::LEFT_CENTER,
+                                            label,
+                                            egui::FontId::proportional(13.0),
+                                            visual::INK,
+                                        );
+                                        painter.text(
+                                            rect.left_bottom() + egui::vec2(12.0, -13.0),
+                                            egui::Align2::LEFT_CENTER,
+                                            APP_NAMES[i],
+                                            egui::FontId::proportional(12.0),
+                                            visual::MUTED,
+                                        );
+                                        focus(ui, &response);
+                                        response
+                                    })
+                                    .inner;
+                                if response.clicked() {
+                                    self.start(Job::New(i), ctx);
+                                }
+                                let status = if ready {
+                                    if can_new {
+                                        "Ready"
+                                    } else {
+                                        "Creation unavailable"
+                                    }
                                 } else if self.apps[i].path.is_none() {
                                     "Not installed"
                                 } else {
                                     "Unavailable"
-                                })
-                                .size(12.0)
-                                .color(visual::MUTED),
-                            );
-                            ui.add_space(12.0);
-                            if button(
-                                ui,
-                                ["Blank document", "Blank spreadsheet", "Blank presentation"][i],
-                                enabled && can_new,
-                            )
-                            .clicked()
-                            {
-                                self.start(Job::New(i), ctx);
-                            }
-                            if !ready && ui.small_button("Set up editor").clicked() {
-                                self.page = Page::Settings;
-                            }
-                        });
+                                };
+                                response.on_disabled_hover_text(if !ready {
+                                    "Set up this editor in Settings to create files."
+                                } else {
+                                    "This editor cannot create a new file right now."
+                                });
+                                ui.label(RichText::new(status).size(12.0).color(visual::MUTED));
+                            },
+                        );
                     });
-            }
-        });
+                }
+            });
+        }
+        if self.apps.iter().any(|a| a.manifest.is_none()) {
+            ui.add_space(6.0);
+            ui.horizontal_wrapped(|ui| {
+                ui.label(
+                    RichText::new("Choose installed editors.")
+                        .small()
+                        .color(visual::MUTED),
+                );
+                if ui.link("Set up editors").clicked() {
+                    self.page = Page::Settings;
+                }
+            });
+        }
     }
 
     fn recent_files(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, compact: bool) {
+        section(ui, "Recent files");
+        ui.add_space(10.0);
+        if !self.recent.is_empty() {
+            let search = ui.add_sized(
+                [ui.available_width().min(400.0), 30.0],
+                egui::TextEdit::singleline(&mut self.recent_query).hint_text("Search recent files"),
+            );
+            search.widget_info(|| {
+                egui::WidgetInfo::labeled(egui::WidgetType::TextEdit, true, "Search recent files")
+            });
+            ui.add_space(12.0);
+        }
+        let width = ui.available_width();
+        let (header, _) = ui.allocate_exact_size(egui::vec2(width, 28.0), Sense::hover());
+        ui.painter().text(
+            header.left_center() + egui::vec2(40.0, 0.0),
+            egui::Align2::LEFT_CENTER,
+            "Name",
+            egui::FontId::proportional(12.0),
+            visual::MUTED,
+        );
+        if width >= 330.0 {
+            ui.painter().text(
+                header.right_center() - egui::vec2(12.0, 0.0),
+                egui::Align2::RIGHT_CENTER,
+                "Last opened",
+                egui::FontId::proportional(12.0),
+                visual::MUTED,
+            );
+        }
+        ui.painter().hline(
+            header.x_range(),
+            header.bottom(),
+            egui::Stroke::new(1.0, visual::LINE),
+        );
         if self.recent.is_empty() {
-            ui.label(RichText::new("No recent files").color(visual::MUTED));
-            ui.label("Files appear here after you open them with an editor.");
+            ui.add_space(24.0);
+            ui.horizontal(|ui| {
+                let (icon, _) = ui.allocate_exact_size(egui::vec2(32.0, 40.0), Sense::hover());
+                draw_glyph(ui.painter(), icon.center(), Glyph::Clock, visual::MUTED);
+                ui.vertical(|ui| {
+                    ui.label("No recent files");
+                    ui.label(
+                        RichText::new("Files you open with an editor will appear here.")
+                            .small()
+                            .color(visual::MUTED),
+                    );
+                });
+            });
+            ui.add_space(16.0);
+            if button(ui, "Open a file…", !self.busy() && self.registry.is_some()).clicked() {
+                self.open_picker(ctx);
+            }
             return;
         }
-        let recent = self.recent.clone();
+        let query = self.recent_query.trim().to_lowercase();
+        let recent: Vec<_> = self
+            .recent
+            .iter()
+            .filter(|entry| entry.path.to_string_lossy().to_lowercase().contains(&query))
+            .cloned()
+            .collect();
+        if recent.is_empty() {
+            ui.add_space(16.0);
+            ui.label("No matching recent files");
+            if ui.button("Clear search").clicked() {
+                self.recent_query.clear();
+            }
+        }
         for entry in recent.iter().take(if compact { 6 } else { 30 }) {
-            ui.separator();
-            let name = entry.path.file_name().unwrap_or_default().to_string_lossy();
-            let row = ui.add_enabled(
-                !self.busy() && self.registry.is_some(),
-                egui::Button::new(name.as_ref())
-                    .frame(false)
-                    .sense(Sense::click()),
-            );
-            focus(ui, &row);
-            row.widget_info(|| {
-                egui::WidgetInfo::labeled(
-                    egui::WidgetType::Button,
-                    true,
-                    format!("Open {}", entry.path.display()),
-                )
-            });
-            if row.clicked() {
+            let enabled = !self.busy() && self.registry.is_some();
+            let response = ui
+                .push_id(&entry.path, |ui| {
+                    ui.add_enabled_ui(enabled, |ui| {
+                        let (rect, response) = ui.allocate_exact_size(
+                            egui::vec2(ui.available_width(), visual::FILE_ROW_HEIGHT),
+                            Sense::click(),
+                        );
+                        response.widget_info(|| {
+                            egui::WidgetInfo::labeled(
+                                egui::WidgetType::Button,
+                                ui.is_enabled(),
+                                format!("Open {}", entry.path.display()),
+                            )
+                        });
+                        if response.hovered() {
+                            ui.painter().rect_filled(rect, 0, visual::NAV);
+                        }
+                        let app = APP_IDS
+                            .iter()
+                            .position(|id| *id == entry.app_id)
+                            .unwrap_or(0);
+                        file_symbol(
+                            ui.painter(),
+                            rect.left_center() + egui::vec2(18.0, 0.0),
+                            app,
+                        );
+                        let name = entry.path.file_name().unwrap_or_default().to_string_lossy();
+                        let text_width = (rect.width()
+                            - if rect.width() >= 330.0 { 160.0 } else { 52.0 })
+                        .max(20.0);
+                        clipped_text(
+                            ui,
+                            rect.min + egui::vec2(40.0, 9.0),
+                            &name,
+                            14.0,
+                            visual::INK,
+                            text_width,
+                        );
+                        let parent = entry
+                            .path
+                            .parent()
+                            .unwrap_or(&entry.path)
+                            .display()
+                            .to_string();
+                        clipped_text(
+                            ui,
+                            rect.min + egui::vec2(40.0, 32.0),
+                            &parent,
+                            12.0,
+                            visual::MUTED,
+                            text_width,
+                        );
+                        if rect.width() >= 330.0 {
+                            ui.painter().text(
+                                rect.right_center() - egui::vec2(12.0, 0.0),
+                                egui::Align2::RIGHT_CENTER,
+                                age(entry.opened_at),
+                                egui::FontId::proportional(12.0),
+                                visual::MUTED,
+                            );
+                        }
+                        focus(ui, &response);
+                        response
+                    })
+                    .inner
+                })
+                .inner;
+            if response.clicked() {
                 self.start(Job::Open(entry.path.clone(), None), ctx);
             }
-            row.on_hover_text(entry.path.display().to_string())
+            response
+                .on_hover_text(entry.path.display().to_string())
                 .context_menu(|ui| {
-                    if ui.button("Remove from recent list").clicked() {
+                    if button(ui, "Remove from recent list", enabled).clicked() {
                         self.start(Job::RemoveRecent(Some(entry.path.clone())), ctx);
                         ui.close();
                     }
                 });
-            ui.horizontal(|ui| {
-                ui.add(
-                    egui::Label::new(
-                        RichText::new(entry.path.display().to_string())
-                            .small()
-                            .color(visual::MUTED),
-                    )
-                    .truncate(),
-                );
-                ui.label(
-                    RichText::new(age(entry.opened_at))
-                        .small()
-                        .color(visual::MUTED),
-                );
-            });
-            ui.add_space(6.0);
         }
-        ui.separator();
+        ui.add_space(12.0);
         if compact {
-            if ui.button("Show all recent files").clicked() {
+            if ui.link("Show all recent files").clicked() {
                 self.page = Page::Recent;
             }
         } else if button(ui, "Clear recent list", !self.busy()).clicked() {
@@ -590,7 +915,7 @@ impl OfficeApp {
                 ui.add(egui::Label::new(path.display().to_string()).wrap());
             }
             let has_path = state.path.is_some();
-            ui.horizontal(|ui| {
+            ui.horizontal_wrapped(|ui| {
                 if button(
                     ui,
                     &format!(
@@ -617,7 +942,6 @@ impl OfficeApp {
             });
             ui.add_space(14.0);
             ui.separator();
-            ui.add_space(10.0);
         }
         if button(ui, "Check installed editors", enabled).clicked() {
             self.start(Job::Refresh, ctx);
@@ -683,5 +1007,191 @@ fn age(timestamp: u64) -> String {
         1..60 => format!("{minutes} min ago"),
         60..1440 => format!("{} h ago", minutes / 60),
         _ => format!("{} days ago", minutes / 1440),
+    }
+}
+
+fn command_hint(key: &str) -> String {
+    format!(
+        "{}+{key}",
+        if cfg!(target_os = "macos") {
+            "Cmd"
+        } else {
+            "Ctrl"
+        }
+    )
+}
+
+fn section(ui: &mut egui::Ui, text: &str) {
+    ui.label(RichText::new(text).size(18.0));
+}
+
+fn clipped_text(ui: &egui::Ui, pos: egui::Pos2, text: &str, size: f32, color: Color32, width: f32) {
+    let mut job = egui::text::LayoutJob::simple_singleline(
+        text.into(),
+        egui::FontId::proportional(size),
+        color,
+    );
+    job.wrap = egui::text::TextWrapping {
+        max_width: width,
+        max_rows: 1,
+        break_anywhere: true,
+        ..Default::default()
+    };
+    let galley = ui.fonts(|fonts| fonts.layout_job(job));
+    ui.painter().galley(pos, galley, color);
+}
+
+#[derive(Clone, Copy)]
+enum Glyph {
+    Home,
+    New,
+    Folder,
+    Clock,
+    Settings,
+    Info,
+}
+
+// Original line pictograms drawn with Rust; no external icon font or Microsoft assets.
+fn draw_glyph(p: &egui::Painter, center: egui::Pos2, icon: Glyph, color: Color32) {
+    let stroke = egui::Stroke::new(1.3, color);
+    let at = |x, y| center + egui::vec2(x, y);
+    let line = |points: &[(f32, f32)]| {
+        p.add(egui::Shape::line(
+            points.iter().map(|&(x, y)| at(x, y)).collect(),
+            stroke,
+        ));
+    };
+    match icon {
+        Glyph::Home => {
+            line(&[(-9.0, -1.0), (0.0, -8.0), (9.0, -1.0)]);
+            line(&[
+                (-6.0, -2.0),
+                (-6.0, 8.0),
+                (-2.0, 8.0),
+                (-2.0, 2.0),
+                (2.0, 2.0),
+                (2.0, 8.0),
+                (6.0, 8.0),
+                (6.0, -2.0),
+            ]);
+        }
+        Glyph::New => {
+            line(&[
+                (-6.0, 8.0),
+                (-6.0, -8.0),
+                (3.0, -8.0),
+                (7.0, -4.0),
+                (7.0, 0.0),
+            ]);
+            line(&[(3.0, -8.0), (3.0, -4.0), (7.0, -4.0)]);
+            line(&[(0.0, 5.0), (10.0, 5.0)]);
+            line(&[(5.0, 0.0), (5.0, 10.0)]);
+        }
+        Glyph::Folder => {
+            line(&[
+                (-9.0, 7.0),
+                (-9.0, -6.0),
+                (-2.0, -6.0),
+                (0.0, -3.0),
+                (8.0, -3.0),
+                (8.0, 0.0),
+            ]);
+            line(&[
+                (-9.0, 7.0),
+                (-5.0, -1.0),
+                (10.0, -1.0),
+                (6.0, 7.0),
+                (-9.0, 7.0),
+            ]);
+        }
+        Glyph::Clock => {
+            p.circle_stroke(center, 8.0, stroke);
+            line(&[(0.0, -5.0), (0.0, 0.0), (4.0, 2.0)]);
+        }
+        Glyph::Settings => {
+            p.circle_stroke(center, 6.0, stroke);
+            p.circle_stroke(center, 2.0, stroke);
+            for n in 0..8 {
+                let a = n as f32 * std::f32::consts::TAU / 8.0;
+                p.line_segment(
+                    [
+                        at(a.cos() * 6.0, a.sin() * 6.0),
+                        at(a.cos() * 9.0, a.sin() * 9.0),
+                    ],
+                    stroke,
+                );
+            }
+        }
+        Glyph::Info => {
+            p.circle_stroke(center, 8.0, stroke);
+            p.circle_filled(at(0.0, -4.0), 0.9, color);
+            line(&[(0.0, -1.0), (0.0, 5.0)]);
+        }
+    }
+}
+
+fn file_symbol(p: &egui::Painter, center: egui::Pos2, kind: usize) {
+    let colors = [
+        visual::ACCENT,
+        Color32::from_rgb(36, 112, 105),
+        Color32::from_rgb(173, 75, 59),
+    ];
+    let rect = egui::Rect::from_center_size(center, egui::vec2(21.0, 27.0));
+    p.rect(
+        rect,
+        1,
+        Color32::WHITE,
+        egui::Stroke::new(1.0, colors[kind]),
+        egui::StrokeKind::Inside,
+    );
+    p.rect_filled(
+        egui::Rect::from_min_size(rect.min, egui::vec2(3.0, 27.0)),
+        0,
+        colors[kind],
+    );
+    p.text(
+        center + egui::vec2(1.0, 0.0),
+        egui::Align2::CENTER_CENTER,
+        ["D", "S", "P"][kind],
+        egui::FontId::proportional(12.0),
+        colors[kind],
+    );
+}
+
+fn document_preview(p: &egui::Painter, card: egui::Rect, kind: usize) {
+    let center = card.center_top() + egui::vec2(0.0, 50.0);
+    let size = [
+        egui::vec2(54.0, 72.0),
+        egui::vec2(96.0, 64.0),
+        egui::vec2(100.0, 57.0),
+    ][kind];
+    let paper = egui::Rect::from_center_size(center, size);
+    p.rect_filled(
+        paper.translate(egui::vec2(2.0, 2.0)),
+        0,
+        Color32::from_black_alpha(12),
+    );
+    p.rect(
+        paper,
+        0,
+        Color32::WHITE,
+        egui::Stroke::new(1.0, Color32::from_gray(183)),
+        egui::StrokeKind::Inside,
+    );
+    if kind == 1 {
+        let grid = paper.shrink(5.0);
+        p.rect_filled(
+            egui::Rect::from_min_size(grid.min, egui::vec2(grid.width(), 8.0)),
+            0,
+            visual::NAV,
+        );
+        for n in 1..6 {
+            let y = grid.top() + n as f32 * 9.0;
+            p.hline(grid.x_range(), y, egui::Stroke::new(0.5, visual::LINE));
+        }
+        for n in 1..5 {
+            let x = grid.left() + n as f32 * 17.0;
+            p.vline(x, grid.y_range(), egui::Stroke::new(0.5, visual::LINE));
+        }
     }
 }

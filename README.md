@@ -98,6 +98,14 @@ fake templates or accounts are shown. The approved logo retains transparency.
 On macOS choose the binary inside an `.app` bundle, on Windows an `.exe` file.
 No Python runtime, JavaScript frontend, Electron or WebView is used.
 
+The current desktop refinement uses visual specification **1.1.0**: compact icon
+navigation, blank-file previews, searchable real recents and a local Open pane.
+
+![Running Rust Home screen on macOS, light theme, 100% app zoom](docs/screenshots/desktop-v1-1/macos-home-100-default.png)
+
+Actual macOS prototype capture, not a Windows or Microsoft Office reference.
+See the [capture inventory and limitations](docs/screenshots/desktop-v1-1/README.md).
+
 See [architecture](docs/architecture.md), [Rust decision](docs/adr/0002-rust-native-shell.md),
 [visual system v1](docs/visual/v1/README.md), [reference inventory](docs/visual/v1/reference.md)
 and [validation report](docs/validation-rust.md). The appearance target is Windows

@@ -36,3 +36,15 @@ Office has no editing model, cloud accounts, telemetry, common server, automatic
 updater or installer. No DOCX/XLSX/PPTX support is inferred from extensions.
 Native dependency code, configuration and shaders do not alter the Rust-only
 application/GUI decision. A source-run prototype is not a packaged OS release.
+
+## Desktop presentation refinement
+
+Visual specification [v1.1.0](visual/v1/README.md) retains egui/eframe and the
+existing integration/settings contracts. Navigation and document-preview widgets
+are native Rust drawing with AccessKit labels and keyboard focus. Recent-file
+search filters only the in-memory view of persisted records; it neither adds
+history nor changes dispatch. The Open location pane stacks at narrow widths;
+card columns are calculated from available logical space. The capture feature
+can select page, zoom, window size, menu/focus state and an isolated settings
+path for repeatable own-window evidence. These controls are absent from the
+normal build. Real Windows scaling and screen-reader acceptance remain open.

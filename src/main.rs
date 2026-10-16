@@ -57,9 +57,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     let icon =
         image::load_from_memory(include_bytes!("../docs/brand/breakfree-icon.webp"))?.to_rgba8();
+    #[cfg(feature = "validation-capture")]
+    let window_size = match env::var("BREAKFREE_CAPTURE_SIZE").as_deref() {
+        Ok("minimum") => [880.0, 600.0],
+        Ok("large") => [1440.0, 900.0],
+        _ => [1120.0, 760.0],
+    };
+    #[cfg(not(feature = "validation-capture"))]
+    let window_size = [1120.0, 760.0];
     let options = eframe::NativeOptions {
         viewport: eframe::egui::ViewportBuilder::default()
-            .with_inner_size([1120.0, 760.0])
+            .with_inner_size(window_size)
             .with_min_inner_size([880.0, 600.0])
             .with_icon(eframe::egui::IconData {
                 rgba: icon.as_raw().clone(),
@@ -68,6 +76,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }),
         ..Default::default()
     };
+    #[cfg(feature = "validation-capture")]
+    let file: PathBuf = env::var_os("BREAKFREE_CAPTURE_SETTINGS")
+        .map(PathBuf::from)
+        .unwrap_or_else(registry::settings_path);
+    #[cfg(not(feature = "validation-capture"))]
     let file: PathBuf = registry::settings_path();
     eframe::run_native(
         "BreakFree Office",

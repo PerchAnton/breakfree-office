@@ -25,3 +25,12 @@ Windows build, theme setting, language, monitor DPI/scale, physical and logical
 window dimensions, view, source/permission and capture time. Then compare with
 the actual BreakFree Windows build at the same settings. The initial token values
 are owner-directed implementation choices while these measurements are pending.
+
+## Desktop refinement check — 2026-10-16
+
+The official pages above were rechecked for this iteration. The Backstage page
+explicitly labels its newer Start image as Word for Office 365 and covers multiple
+releases. It is behavioral context only, not an authenticated Office 2024 baseline.
+Version 1.1.0 improves the owner-directed layout and density without upgrading the
+reference status. Build/theme/language/scale/window proof for actual Office 2024
+Start/Backstage is still required before any measured visual-match claim.
